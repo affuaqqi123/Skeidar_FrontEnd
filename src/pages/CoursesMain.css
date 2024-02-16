@@ -1,0 +1,106 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  background-color: rgb(255, 255, 255);
+  width: 100%;
+  height: 100vh;
+}
+
+.left-container {
+  flex: 0 0 30%;
+  padding: 0px;
+  background-color: rgb(255, 255, 255);
+  overflow-y: auto;
+  height: 100vh;
+}
+
+.content-heading {
+  background-color: #000000;
+  padding: 5px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.left-content {
+  height: 99vh;
+  border: 1px solid #6b6b6b;
+  overflow-y: auto;
+}
+
+.right-container {
+  flex: 0 0 70%;
+  padding: 5px;
+  background-color: rgb(233, 230, 230);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 99vh;
+}
+
+.right-content-top,
+.right-content-bottom {
+  margin: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.right-content-top {
+  position: relative;
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  padding: 10px;
+}
+
+.right-content-bottom {
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  padding: 10px;
+}
+
+.clickable-title {
+  cursor: pointer;
+  padding: 8px;
+  margin-bottom: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.step-title {
+  margin-left: 10px;
+}
+
+.stepwithoption {
+  display: inline-block;
+}
+
+.editicon {
+  transition: 0.5s;
+}
+
+.editicon:hover {
+  color: blue;
+  transform: scale(1.5);
+}
+
+.trashicon {
+  transition: 0.5s;
+}
+
+.trashicon:hover {
+  color: red;
+  transform: scale(1.5);
+}
+
+.btn.active {
+  font-size: 15px;
+}

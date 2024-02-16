@@ -1,0 +1,64 @@
+.stepper-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  height: 50px; 
+  width: 100%;
+}
+
+.stepper-step {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 100%;
+  width:15%
+}
+
+.step {
+  width: 30px;
+  height: 30px;
+  background-color: #ddd;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.step.active {
+  background-color: forestgreen;
+  color: #fff;
+}
+
+.progress-line {
+  height: 2px;
+  background-color: forestgreen;
+  flex-grow: 1;
+}
+
+
+.content-section,
+.description-section {
+  margin-bottom: 20px;
+}
+
+.navigation-buttons button {
+  margin-right: 10px;
+}
+
+.description-section {
+  border-left: 1px !important;
+  border-right: 1px !important;
+  border-top: 1px !important;
+}
+
+.btn {
+  margin: 6px;
+}
+
+.iconstyle {
+  padding-right: 5px;
+}

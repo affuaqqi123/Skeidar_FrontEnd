@@ -1,0 +1,64 @@
+*{
+    margin:0;
+    padding:0;
+    text-decoration: none;
+   
+}
+.cont{
+    display:flex;
+    width: auto;
+    height: auto;
+}
+
+.bars{
+    display: flex;
+    font-size: 25px; 
+
+}
+main{
+    
+    padding: 0px;
+}
+.sideb{
+    height: auto;
+    background: #000;
+    color: #fff;
+    min-height: 100vh;
+    transition: all 0.5s;
+}
+.top_section{
+    display: flex;
+    align-items:center;
+    padding:20px 15px;
+}
+.logo{
+    font-size: 30px;
+    
+}
+
+.link{
+    display: flex;
+    color: #fff;
+    padding: 10px 15px;
+    gap: 15px;
+    transition: all 0.5s;
+}
+.link:hover{
+    background:lightskyblue;
+    color: #000;
+    transition: all 0.5s;
+}
+.active{
+    background: lightskyblue;
+    color: #000;
+}
+.icon, .link_text{
+    font-size: 20px;
+}
+
+@media only screen and (max-width: 450px){
+    .sideb{
+         width: 100px;
+    }
+}
+
