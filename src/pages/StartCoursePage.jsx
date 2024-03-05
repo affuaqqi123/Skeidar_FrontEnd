@@ -18,64 +18,83 @@ const COURSE_API_URL = 'https://localhost:7295/api';
 const StartCoursePage = () => {
 
   const userDetails = JSON.parse(localStorage.getItem('userDetails'));
-  const headers = { 'Authorization': userDetails.token }; // auth header with bearer token
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${userDetails.token}`
+  }
   const navigate = useNavigate();
   const { id } = useParams();
-  const userID = 1;
+  const userID = userDetails.userID;
 
   const [currentStep, setCurrentStep] = useState(1);
   const [courseData, setCourseData] = useState([]);
   const [userCourseSteps, setUserCourseSteps] = useState([]);
   const [videoUrl, setVideoUrl] = useState('');
+  const [imageUrls, setImageUrls] = useState([]);
   const [videoWatched, setVideoWatched] = useState(false);
 
   const fetchCourseData = async () => {
-
-   
     console.log("Entered Fetch");
     try {
-      const response = await axios.get(`${COURSE_API_URL}/CourseStep/Course/${id}`,{headers});
-      if(response){
-      const sortedData = response.data.slice().sort((a, b) => a.stepNo - b.stepNo);
+      const response = await axios.get(`${COURSE_API_URL}/CourseStep/Course/${id}`, { headers });
+      if (response) {
+        const sortedData = response.data.slice().sort((a, b) => a.stepNo - b.stepNo);
+        console.log("CourseData", sortedData);
+        let userCourseStepsResponse = await axios.get(`${COURSE_API_URL}/UserCourseStep/ByCourseAndUser/${id}/${userID}`, { headers });
+        let userSteps = userCourseStepsResponse.data;
+        if (userSteps.length === 0) {
+          userSteps = sortedData.map((step) => ({
+            courseStepID: 0,
+            userID: userID,
+            courseID: step.courseID,
+            stepNumber: step.stepNo,
+            status: "InComplete",
+          }));
+          createuserCourseStep(userSteps);
+        }
 
-      console.log("CourseData", sortedData);
+        console.log("userCourseStep", userCourseSteps);
+        console.log("userStep", userSteps);
 
-     
-      let userCourseStepsResponse = await axios.get(`${COURSE_API_URL}/UserCourseStep/ByCourseAndUser/${id}/${userID}`, { headers });
-      let userSteps = userCourseStepsResponse.data;
-      if (userSteps.length === 0) {
-        userSteps = sortedData.map((step) => ({
-          courseStepID: 0,
-          userID: userID,
-          courseID: step.courseID,
-          stepNumber: step.stepNo,
-          status: "InComplete",
-        }));
-        createuserCourseStep(userSteps);
-      }
+        const firstIncompleteStep = userSteps.find(step => step.status !== 'Completed');
 
-      console.log("userCourseStep", userCourseSteps);
-      console.log("userStep", userSteps);
+        if (firstIncompleteStep) {
+          setCurrentStep(firstIncompleteStep.stepNumber);
+          setCourseData(sortedData);
+          // videoRef.current.currentTime = firstIncompleteStep.status;
+        } else {
+          setCurrentStep(0);
+        }
 
-      const firstIncompleteStep = userSteps.find(step => step.status !== 'Completed');
+        if (response.data.length > 0 && response.data[0].contentType === 'Video' && response.data[0].stepNo === firstIncompleteStep.stepNumber) {
+          const res = await axios.get(
+            `${COURSE_API_URL}/CourseStep/filecontent?CourseID=${response.data[0].courseID}&StepNo=${response.data[0].stepNo}&ContentType=${response.data[0].contentType}&FileName=${response.data[0].stepContent}`,
+            { responseType: 'arraybuffer', headers }
+          );
+          const blob = new Blob([res.data], { type: 'video/mp4' });
+          const bloburl = URL.createObjectURL(blob);
+          setVideoUrl(bloburl);
+        }
+        else {
+          const fileNames = response.data[0].stepContent.split(',');
+          const responses = await Promise.all(
+            fileNames.map(async (fileName) => {
+              return await axios.get(
+                `${COURSE_API_URL}/CourseStep/filecontent?CourseID=${response.data[0].courseID}&StepNo=${response.data[0].stepNo}&ContentType=${response.data[0].contentType}&FileName=${response.data[0].stepContent}`,
+                { responseType: 'arraybuffer', headers }
+              );
+            })
+          );
 
-      if (firstIncompleteStep) {
-        setCurrentStep(firstIncompleteStep.stepNumber);
-        setCourseData(sortedData);
-        // videoRef.current.currentTime = firstIncompleteStep.status;
-      } else {
-        setCurrentStep(0);
-      }
+          const imageBlobUrls = Array.isArray(responses)
+            ? responses.map((response) => {
+              const blob = new Blob([response.data], { type: 'image/jpeg' });
+              return URL.createObjectURL(blob);
+            })
+            : [];
 
-      if (response.data.length > 0 && response.data[0].contentType === 'Video' && response.data[0].stepNo === firstIncompleteStep.stepNumber) {
-        const res = await axios.get(
-          `${COURSE_API_URL}/CourseStep/filecontent?CourseID=${response.data[0].courseID}&StepNo=${response.data[0].stepNo}&ContentType=${response.data[0].contentType}&FileName=${response.data[0].stepContent}`,
-          { responseType: 'arraybuffer' },{headers}
-        );
-        const blob = new Blob([res.data], { type: 'video/mp4' });
-        const bloburl = URL.createObjectURL(blob);
-        setVideoUrl(bloburl);
-      }
+          setImageUrls(imageBlobUrls);
+        }
       }
 
 
@@ -88,9 +107,9 @@ const StartCoursePage = () => {
   const createuserCourseStep = async (userSteps) => {
     try {
       for (const Step of userSteps) {
-        await axios.post(`${COURSE_API_URL}/UserCourseStep`, Step);
+        await axios.post(`${COURSE_API_URL}/UserCourseStep`, Step, { headers });
       }
-      let userCourseStepsResponse = await axios.get(`${COURSE_API_URL}/UserCourseStep/ByCourseAndUser/${id}/${userID}`,{headers});
+      let userCourseStepsResponse = await axios.get(`${COURSE_API_URL}/UserCourseStep/ByCourseAndUser/${id}/${userID}`, { headers });
     } catch (error) {
       console.error('Error creating user course steps:', error);
     }
@@ -105,6 +124,7 @@ const StartCoursePage = () => {
     console.log('Effect 2 triggered');
     if (courseData.length > 0) {
       updateVideoUrl();
+      updateImageUrl();
     }
   }, [currentStep]);
 
@@ -117,7 +137,7 @@ const StartCoursePage = () => {
         setVideoUrl('');
         const response = await axios.get(
           `${COURSE_API_URL}/CourseStep/filecontent?CourseID=${courseData[currentStep - 1].courseID}&StepNo=${courseData[currentStep - 1].stepNo}&ContentType=${courseData[currentStep - 1].contentType}&FileName=${courseData[currentStep - 1].stepContent}`,
-          { responseType: 'arraybuffer' },{headers}
+          { responseType: 'arraybuffer', headers }
         );
 
         const blob = new Blob([response.data], { type: 'video/mp4' });
@@ -134,6 +154,40 @@ const StartCoursePage = () => {
       setVideoUrl('');
     }
   };
+  const updateImageUrl = async () => {
+    console.log("called");
+
+    if (courseData[currentStep - 1]?.contentType === 'Image') {
+      try {
+        console.log("try");
+        setImageUrls('');
+        const fileNames = courseData[currentStep - 1].stepContent.split(',');
+        const responses = await Promise.all(
+          fileNames.map(async (fileName) => {
+            return await axios.get(`${COURSE_API_URL}/CourseStep/filecontent?CourseID=${courseData[currentStep - 1].courseID}&StepNo=${courseData[currentStep - 1].stepNo}&ContentType=${courseData[currentStep - 1].contentType}&FileName=${fileName}`
+              , { responseType: 'arraybuffer', headers });
+          })
+        );
+
+        const imageBlobUrls = Array.isArray(responses)
+          ? responses.map((response) => {
+            const blob = new Blob([response.data], { type: 'image/jpeg' });
+            return URL.createObjectURL(blob);
+          })
+          : [];
+
+        setImageUrls(imageBlobUrls);
+
+
+      } catch (error) {
+        console.log("catch");
+        console.error('Error fetching Image data:', error);
+        setImageUrls('');
+      }
+    } else {
+      setImageUrls('');
+    }
+  };
 
   const handleExit = async () => {
     if (courseData[currentStep - 1]?.contentType === 'Video' && !videoWatched) {
@@ -143,7 +197,7 @@ const StartCoursePage = () => {
         const stepNo = courseData[currentStep - 1].stepNo;
         console.log(status, courseId, stepNo);
         await axios.put(
-          `${COURSE_API_URL}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`,{headers}
+          `${COURSE_API_URL}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`, { headers }
         );
         navigate('/courses');
       } catch (error) {
@@ -161,9 +215,19 @@ const StartCoursePage = () => {
         let status = "Completed";
         const courseId = courseData[currentStep - 1].courseID;
         const stepNo = courseData[currentStep - 1].stepNo;
-        await axios.put(
-          `${COURSE_API_URL}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`,{headers}
-        );
+
+        const response = await fetch(`${COURSE_API_URL}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userDetails.token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
         setCurrentStep((prevStep) => Math.min(prevStep + 1, courseData.length));
         setVideoWatched(false);
         window.scrollTo({
@@ -176,6 +240,7 @@ const StartCoursePage = () => {
       }
     }
   };
+
 
   const handlePrevious = () => {
     setCurrentStep((prevStep) => Math.max(prevStep - 1, 1));
@@ -194,18 +259,38 @@ const StartCoursePage = () => {
         let status = "Completed";
         const courseId = courseData[currentStep - 1].courseID;
         const stepNo = courseData[currentStep - 1].stepNo;
-        await axios.put(
-          `${COURSE_API_URL}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`,{headers}
+        const response = await fetch(
+          `${COURSE_API_URL}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${userDetails.token}`
+            }
+          }
         );
-        toast.success('Course submitted successfully!', {
-          position: toast.POSITION.TOP_CENTER,
-        });
-        navigate('/courses');
+        if (response.ok) {
+          toast.success('Course submitted successfully!', {
+            position: toast.POSITION.TOP_CENTER,
+          });
+          navigate('/courses');
+        } else {
+          throw new Error('Failed to submit course');
+        }
       } catch (error) {
         console.error('Error updating status and video time:', error);
       }
     }
   }
+
+
+
+  // Function to generate image URL with headers
+  // const getImageUrl = (courseID, stepNo, contentType, fileName) => {
+  //   const url = `${COURSE_API_URL}/CourseStep/filecontent?CourseID=${courseID}&StepNo=${stepNo}&ContentType=${contentType}&FileName=${fileName}`;
+  //   return `${url}&headers=${headers}`;
+  // }
+
 
   return (
     <div className='m-3'>
@@ -231,15 +316,17 @@ const StartCoursePage = () => {
           <>
             {courseData[currentStep - 1].contentType === 'Image' && (
               <>
-                {courseData[currentStep - 1].stepContent.split(',').map((fileName, index) => (
-                  <div className='d-flex justify-content-center pb-5' key={index}>
-                    <img
-                      src={`${COURSE_API_URL}/CourseStep/filecontent?CourseID=${courseData[currentStep - 1].courseID}&StepNo=${courseData[currentStep - 1].stepNo}&ContentType=${courseData[currentStep - 1].contentType}&FileName=${fileName}`}
-                      alt={`Step ${courseData[currentStep - 1].stepNo} Image ${index + 1}`}
-                    />
-                    <hr></hr>
+                {imageUrls.length > 0 && (
+                  <div >
+                    {imageUrls.map((imageUrl, index) => (
+                      <div key={index} className='media-item'>
+                        <div>
+                          <img src={imageUrl} className='uploaded-image m-3' style={{ width: '90%', height: 'auto' }} />
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </>
             )}
             {courseData[currentStep - 1].contentType === 'Video' && (

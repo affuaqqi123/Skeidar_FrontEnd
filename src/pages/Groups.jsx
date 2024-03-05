@@ -1,29 +1,30 @@
-import React, { useState, useEffect, Fragment } from "react";
-import ReactDOM from "react-dom/client";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { Modal, Button, Form, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
 
 const Groups = () => {
 
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
-    const headers = { 'Authorization': userDetails.token }; // auth header with bearer token
-
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userDetails.token}`
+    }
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    //Validation Variable
+    const [groupNameError, setGroupNameError] = useState('');
+    const [editGroupNameError, setEditGroupNameError] = useState('');
 
     const [showadd, setShowAdd] = useState(false);
     const handleCloseAdd = () => {
         setShowAdd(false);
         clear();
+        clearErrors();
     };
     const handleShowAdd = () => setShowAdd(true);
 
@@ -78,45 +79,68 @@ const Groups = () => {
         }
     }
     const handleUpdate = () => {
+        let formIsValid = true;
 
-        const url = `https://localhost:7295/api/Group/${editID}`;
-        const data = {
-            "groupID": editID,
-            "groupName": editGroup
+        if (!editGroup) {
+            setEditGroupNameError('Name is required');
+            formIsValid = false;
+        } else {
+            setEditGroupNameError('');
         }
-        axios.put(url, data, { headers })
-            .then((result) => {
-                handleClose();
-                getData();
-                clear();
-                toast.success('Group has been updated');
-            }).catch((error) => {
-                toast.error(error);
-            })
+
+        if (formIsValid) {
+            const url = `https://localhost:7295/api/Group/${editID}`;
+            const data = {
+                "groupID": editID,
+                "groupName": editGroup
+            }
+            axios.put(url, data, { headers })
+                .then((result) => {
+                    handleClose();
+                    getData();
+                    clear();
+                    toast.success('Group has been updated');
+                }).catch((error) => {
+                    toast.error(error);
+                })
+        }
     }
 
     const handleSave = () => {
-        const url = 'https://localhost:7295/api/Group';
-        const data = {
-            "groupname": group,
+        let formIsValid = true;
 
+        if (!group) {
+            setGroupNameError('GroupName is required');
+            formIsValid = false;
+        } else {
+            setGroupNameError('');
         }
-        axios.post(url, data, { headers })
-            .then((result) => {
-                handleCloseAdd();
-                getData();
-                clear();
-                toast.success('Group has been added');
-            }).catch((error) => {
-                toast.error(error);
-            })
-    }
 
+        if (formIsValid) {
+            const url = 'https://localhost:7295/api/Group';
+            const data = {
+                "groupname": group,
+
+            }
+            axios.post(url, data, { headers })
+                .then((result) => {
+                    handleCloseAdd();
+                    getData();
+                    clear();
+                    toast.success('Group has been added');
+                }).catch((error) => {
+                    toast.error(error);
+                })
+        }
+    }
+    const clearErrors = () => {
+        setGroupNameError('');
+    }
     const clear = () => {
         setGroup('');
         setEditGroup('');
         setEditId('');
-
+        setGroupNameError('');
     }
     return (
         <div className='d-flex flex-column justify-content-center align-items-center bg-light m-3'>
@@ -156,12 +180,18 @@ const Groups = () => {
                         <Modal.Title>Update details of a Group</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Row>
-                            <Col>
-                                <input type="text" className="form-control" placeholder="Enter Group"
-                                    value={editGroup} onChange={(e) => setEditGroup(e.target.value)} />
-                            </Col>
-                        </Row>
+                        <Form>
+                            <FormGroup>
+                                <FormLabel>Group Name</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Enter Group Name"
+                                    value={editGroup}
+                                    onChange={(e) => setEditGroup(e.target.value)}
+                                />
+                                <div className="text-danger">{editGroupNameError}</div>
+                            </FormGroup>
+                        </Form>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>
@@ -177,12 +207,19 @@ const Groups = () => {
                         <Modal.Title>Create a new Group</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Row>
-                            <Col>
-                                <input type="text" className="form-control" placeholder="Enter Group Name"
-                                    value={group} onChange={(e) => setGroup(e.target.value)} />
-                            </Col>
-                        </Row>
+                        <Form>
+                            <FormGroup>
+                                <FormLabel>Group Name</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Enter Group Name"
+                                    value={group}
+                                    onChange={(e) => setGroup(e.target.value)}
+                                />
+                                
+                                <div className="text-danger">{groupNameError}</div>
+                            </FormGroup>
+                        </Form>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleCloseAdd}>

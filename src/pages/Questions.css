@@ -12,12 +12,13 @@
 
 .questions-table-container {
     margin-bottom: 20px;
+    
 }
 
 .add-button {
     margin-bottom: 20px;
 }
 
-.questions-table {
+.questions-table {    
     width: 100%;
 }

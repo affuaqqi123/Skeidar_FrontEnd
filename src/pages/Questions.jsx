@@ -12,7 +12,9 @@ const Questions = () => {
     const { quizid } = useParams();
 
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
-    const headers = { 'Authorization': userDetails.token };
+    const headers = { 
+        'Content-Type': 'multipart/form-data',
+        'Authorization': userDetails.token };
 
     const [questions, setQuestions] = useState([]);
     const [showAdd, setShowAdd] = useState(false);
@@ -52,7 +54,7 @@ const Questions = () => {
 
     const fetchQuestions = async () => {
         try {
-            const response = await axios.get(`https://localhost:7295/api/Question/QuizID/${quizid}`);
+            const response = await axios.get(`https://localhost:7295/api/Question/QuizID/${quizid}`,{headers});
             const sortedData = response.data.slice().sort((a, b) => a.questionNo - b.questionNo);
             setQuestions(sortedData);
             console.log("QuestionData", response.data)
@@ -79,7 +81,7 @@ const Questions = () => {
             formData.append('imageName', "No Image");
         }
 
-        axios.post('https://localhost:7295/api/Question', formData)
+        axios.post('https://localhost:7295/api/Question', formData,{headers})
             .then((result) => {
                 setShowAdd(false);
                 fetchQuestions();
@@ -111,7 +113,7 @@ const Questions = () => {
         if (question.imageName !== "No Image") {
             try {
                 const response = await axios.get(`https://localhost:7295/api/Question/Image/${question.quizID}/${question.questionNo}/${question.imageName}`, {
-                    responseType: 'arraybuffer'
+                    responseType: 'arraybuffer',headers
                 });
 
                 const blob = new Blob([response.data], { type: 'image/jpeg' });
@@ -174,7 +176,7 @@ const Questions = () => {
             formData.append('imageName', "No Image");
         }
 
-        axios.put(`https://localhost:7295/api/Question/${editQuestionId}`, formData)
+        axios.put(`https://localhost:7295/api/Question/${editQuestionId}`, formData,{headers})
             .then((result) => {
                 fetchQuestions();
                 clearEdit();
@@ -190,7 +192,7 @@ const Questions = () => {
 
     const handleDelete = (questionId) => {
         if (window.confirm('Are you sure you want to delete this question?')) {
-            axios.delete(`https://localhost:7295/api/Question/${questionId}`)
+            axios.delete(`https://localhost:7295/api/Question/${questionId}`,{headers})
                 .then((result) => {
                     fetchQuestions();
                     toast.success('Question has been deleted');
@@ -290,44 +292,44 @@ const Questions = () => {
                         <Modal.Title>Add New Question</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="questionNo">Question Number:</label>
                             <input type="text" className="form-control" placeholder="Enter Question No" name="questionNo" value={newQuestion.questionNo} onChange={handleInputChange} />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="questionText">Question Text:</label>
                             <input type="text" className="form-control" placeholder="Enter Question Text" name="questionText" value={newQuestion.questionText} onChange={handleInputChange} />
                         </div>
 
                         {newQuestion.imageFile && (
-                            <div className="form-group">
+                            <div className="form-group mb-3">
                                 <label>Selected Image Preview:</label><br />
                                 <img src={URL.createObjectURL(newQuestion.imageFile)} alt="Selected Image Preview" style={{ maxWidth: '100px', maxHeight: '100px' }} />
                                 <button className="btn btn-danger" onClick={() => handleRemoveImage()}>Remove Image</button>
                             </div>
                         )}
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="imageFile">Image File:</label>
                             <input type="file" className="form-control-file" name="imageFile" onChange={(e) => setNewQuestion({ ...newQuestion, imageFile: e.target.files[0] })} />
                         </div>
 
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="option1">Option 1:</label>
                             <input type="text" className="form-control" placeholder="Enter Option 1" name="option1" value={newQuestion.option1} onChange={handleInputChange} />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="option2">Option 2:</label>
                             <input type="text" className="form-control" placeholder="Enter Option 2" name="option2" value={newQuestion.option2} onChange={handleInputChange} />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="option3">Option 3:</label>
                             <input type="text" className="form-control" placeholder="Enter Option 3" name="option3" value={newQuestion.option3} onChange={handleInputChange} />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="option4">Option 4:</label>
                             <input type="text" className="form-control" placeholder="Enter Option 4" name="option4" value={newQuestion.option4} onChange={handleInputChange} />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="correctOption">Correct Option:</label>
                             <select id="correctOption" className="form-control" name="correctOption" value={newQuestion.correctOption} onChange={handleInputChange}>
                                 <option value="" disabled hidden>Select Correct Option</option>
@@ -350,45 +352,45 @@ const Questions = () => {
                         <Modal.Title>Edit Question</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="questionNo">Question Number:</label>
                             <input type="text" className="form-control" placeholder="Enter Question No" name="questionNo" value={editQuestion.questionNo} onChange={handleEditInputChange} />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="questionText">Question Text:</label>
                             <input type="text" className="form-control" placeholder="Enter Question Text" name="questionText" value={editQuestion.questionText} onChange={handleEditInputChange} />
                         </div>
 
                         {editQuestion.imageFile && (
-                            <div className="form-group">
+                            <div className="form-group mb-3">
                                 <label>Selected Image Preview:</label><br />
                                 <img src={URL.createObjectURL(editQuestion.imageFile)} alt="Selected Image Preview" style={{ maxWidth: '100px', maxHeight: '100px' }} />
                                 <button className="btn btn-danger" onClick={() => handleRemoveImage()}>Remove Image</button>
                             </div>
                         )}
 
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="imageFile">Image File:</label>
                             <input type="file" className="form-control-file" name="imageFile" onChange={(e) => setEditQuestion({ ...editQuestion, imageFile: e.target.files[0] })} />
                         </div>
 
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="option1">Option 1:</label>
                             <input type="text" className="form-control" placeholder="Enter Option 1" name="option1" value={editQuestion.option1} onChange={handleEditInputChange} />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="option2">Option 2:</label>
                             <input type="text" className="form-control" placeholder="Enter Option 2" name="option2" value={editQuestion.option2} onChange={handleEditInputChange} />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="option3">Option 3:</label>
                             <input type="text" className="form-control" placeholder="Enter Option 3" name="option3" value={editQuestion.option3} onChange={handleEditInputChange} />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="option4">Option 4:</label>
                             <input type="text" className="form-control" placeholder="Enter Option 4" name="option4" value={editQuestion.option4} onChange={handleEditInputChange} />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group mb-3">
                             <label htmlFor="correctOption">Correct Option:</label>
                             <select id="correctOption" className="form-control" name="correctOption" value={editQuestion.correctOption} onChange={handleEditInputChange}>
                                 <option value="" disabled hidden>Select Correct Option</option>

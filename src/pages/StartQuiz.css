@@ -1,0 +1,134 @@
+.startquiz-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: rgb(255, 255, 255);
+  height: 100%;
+
+}
+
+.quiz-title {
+  font-size: 34px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  min-width: 500px;
+}
+
+.question-container {
+  display: flex;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 25px;
+  width: auto;
+  min-width: 390px;
+  align-items: center;
+
+}
+
+.quiz-box {
+  background-color: #fffbf7;
+  margin: 10px;
+  width: 50vw;
+  height: auto;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-around;
+}
+
+.exit-button,
+.next-button,
+.previous-button {
+  padding: 5px 20px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.exit-button {
+  background-color: #ff6347;
+  color: #fff;
+}
+
+.exit-button:hover {
+  background-color: #d32f2f;
+}
+
+.next-button {
+  background-color: #4caf50;
+  color: #fff;
+  float: right;
+}
+
+.next-button:hover {
+  background-color: #388e3c;
+}
+
+.previous-button {
+  background-color: rgb(113, 157, 171);
+  color: #fff;
+  float: right;
+}
+
+.previous-button:hover {
+  background-color: rgb(113, 157, 171);
+
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+}
+
+.option {
+
+  float: left;
+  margin-left: 35px;
+}
+
+.option-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+.rdbtn {
+  margin-right: 10px;
+}
+
+
+@media only screen and (max-width: 600px) {
+  .question-container {
+    max-width: 600px;
+    width: auto;
+    font-size: 15px;
+  }
+  .quiz-title{
+    font-size: 20px;
+  }
+
+}
+
+@media only screen and (min-width: 601px) and (max-width: 767px) {
+  .question-container {
+    max-width: 767px;
+  }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .question-container {
+    max-width: 991px;
+  }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {}
+
+@media only screen and (min-width: 1200px) {}

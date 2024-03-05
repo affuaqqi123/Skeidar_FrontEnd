@@ -1,22 +1,143 @@
-
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html{
+    height: 100%;
+}
+body{
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
 .header {
   height: 80px;
 }
 
 .footer {
-  height: 80px;
+  margin-top: auto;
+  /* height: 80px; */
 }
 
 .main-container {
+  width: auto;
   display: flex;
+  height: 100vh;
+ 
+}
+.btncltrs{
+  display: flex;
+  float: right;
 }
 
-.sidebar {
-  width: auto;
-  background: #000;
+.btnenglish{
+  background-color:purple; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-top: 15px;
+  margin-right: 15px;
+  border-radius: 10%;
+  
 }
+
+.btnnorwagian{
+  background-color:darkred; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-top: 15px;
+  margin-right: 15px;
+  border-radius: 10%;
+  
+}
+
+/* .sidebar {
+  width: auto;
+  background: #000; 
+}*/
 
 .main-content {
+  width: auto;
   flex: 1;
 }
+
+.loginheader {
+  background: black;
+  text-align: center;
+  height: 50px;
+  color: #fff;
+  min-width: 600px;
+  padding-top: 10px;
+
+}
+
+
+@media only screen and (max-width: 600px) {
+  .main-content{
+    max-width: 100%;
+    
+     
+  }
+  .main-container {
+    max-width: 88%;
+    margin-right: 0px !important;
+    max-height: auto;
+    
+    
+  }
+}
+
+@media only screen and (min-width: 601px) and (max-width: 767px) {}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {}
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {}
+
+@media only screen and (min-width: 1200px) {}
+
+/* @media only screen and (max-width: 600px) {
+  .dimsns {
+    width: 400px;
+    max-width: 600px;
+  }
+}
+
+@media only screen and (min-width: 601px) and (max-width: 767px) {
+  .dimsns {
+    width: 601px;
+    max-width: 767px;
+  }
+}
+
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .dimsns {
+    width: 768;
+    max-width: 991px;
+  }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .dimsns {
+    width: 992px;
+    max-width: 1199px;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .dimsns {
+    width: 1200px;
+    
+  }
+} */

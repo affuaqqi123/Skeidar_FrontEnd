@@ -3,10 +3,8 @@ import axios from "axios";
 import Table from 'react-bootstrap/Table';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+import { Modal, Button, Col, Form, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 // import Container from 'react-bootstrap/Container';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,19 +12,26 @@ import 'react-toastify/dist/ReactToastify.css';
 const Users = () => {
 
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
-    const headers = { 'Authorization': userDetails.token }; // auth header with bearer token
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userDetails.token}`
+    }
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
     const [showadd, setShowAdd] = useState(false);
-    const handleCloseAdd = () => setShowAdd(false);
+    const handleCloseAdd = () => {
+        setShowAdd(false);
+        clear();
+        clearErrors();
+    };
     const handleShowAdd = () => setShowAdd(true);
 
-    const[eName, setEName]=useState('');
-    const[ePassword, setEPassword]=useState('');
-    const[eEmail, setEEmail]=useState('');
+    const [eName, setEName] = useState('');
+    const [ePassword, setEPassword] = useState('');
+    const [eEmail, setEEmail] = useState('');
 
 
     //For filters option
@@ -41,6 +46,19 @@ const Users = () => {
     const [role, setRole] = useState('')
     const [store, setStore] = useState('')
 
+    //Error Handling
+    const [nameError, setNameError] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [roleError, setRoleError] = useState('');
+    const [storeError, setStoreError] = useState('');
+
+    const [editNameError, setEditNameError] = useState('');
+    const [editEmailError, setEditEmailError] = useState('');
+    const [editPasswordError, setEditPasswordError] = useState('');
+    const [editRoleError, setEditRoleError] = useState('');
+    const [editStoreError, setEditStoreError] = useState('');
+
     //For Updating existing User
     const [editID, setEditId] = useState('')
     const [editName, setEditName] = useState('')
@@ -48,7 +66,6 @@ const Users = () => {
     const [editPassword, setEditPassword] = useState('')
     const [editRole, setEditRole] = useState('')
     const [editStore, setEditStore] = useState('')
-    const [values, setValues] = useState([])
 
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
@@ -60,9 +77,9 @@ const Users = () => {
         getData();
     }, []);
 
-    
+
     const getData = () => {
-        axios.get('https://localhost:7295/api/User',{headers})
+        axios.get('https://localhost:7295/api/User', { headers })
             .then((result) => {
                 setData(result.data)
                 setRolelist(result.data)
@@ -105,7 +122,7 @@ const Users = () => {
     const handleEdit = (id) => {
         //alert(id);
         handleShow();
-        axios.get(`https://localhost:7295/api/User/${id}`,{headers})
+        axios.get(`https://localhost:7295/api/User/${id}`, { headers })
             .then((result) => {
                 setEditName(result.data.username);
                 setEditEmail(result.data.userEmail);
@@ -123,7 +140,7 @@ const Users = () => {
 
     const handleDelete = (id) => {
         if (window.confirm("Are you sure to delete this User") == true) {
-            axios.delete(`https://localhost:7295/api/User/${id}`,{headers})
+            axios.delete(`https://localhost:7295/api/User/${id}`, { headers })
                 .then((result) => {
                     toast.success('User has been deleted');
                     getData();
@@ -140,28 +157,67 @@ const Users = () => {
         }
     }
     const handleUpdate = () => {
+        let formIsValid = true;
 
-        const url = `https://localhost:7295/api/User/${editID}`;
-        const data = {
-            "userID": editID,
-            "username": editName,
-            "userEmail": editEmail,
-            "password": editPassword,
-            "role": editRole,
-            "storeID":editStore
-
+        if (!editName) {
+            setEditNameError('Name is required');
+            formIsValid = false;
+        } else {
+            setEditNameError('');
         }
-        axios.put(url, data,{headers})
-            .then((result) => {
-                handleClose();
-                getData();
-                clear();
-                toast.success('User has been updated');
-            }).catch((error) => {
-                toast.error(error);
-            })
 
-    }
+        if (!editEmail) {
+            setEditEmailError('Email is required');
+            formIsValid = false;
+        } else {
+            setEditEmailError('');
+        }
+
+        if (!editPassword) {
+            setEditPasswordError('Password is required');
+            formIsValid = false;
+        } else {
+            setEditPasswordError('');
+        }
+
+        if (!editRole) {
+            setEditRoleError('Role is required');
+            formIsValid = false;
+        } else {
+            setEditRoleError('');
+        }
+
+        if (!editStore) {
+            setEditStoreError('Store ID is required');
+            formIsValid = false;
+        } else {
+            setEditStoreError('');
+        }
+
+        if (formIsValid) {
+            const url = `https://localhost:7295/api/User/${editID}`;
+            const data = {
+                "userID": editID,
+                "username": editName,
+                "userEmail": editEmail,
+                "password": editPassword,
+                "role": editRole,
+                "storeID": editStore
+            };
+
+            axios.put(url, data, { headers })
+                .then((result) => {
+                    handleClose();
+                    getData();
+                    clear();
+                    toast.success('User has been updated');
+                })
+                .catch((error) => {
+                    toast.error(error);
+                });
+        }
+    };
+
 
     const handlesend = async (id) => {
         try {
@@ -170,7 +226,7 @@ const Users = () => {
             // Set state variables
             setEName(result.data.username);
             setEPassword(result.data.password);
-            setEEmail(result.data.userEmail);  
+            setEEmail(result.data.userEmail);
             // Perform the second API call after setting state
             const url = `https://localhost:7295/api/User/slgemail?recipientEmail=${result.data.userEmail}&username=${result.data.username}&password=${result.data.password}`;
             console.log({ url });
@@ -181,34 +237,82 @@ const Users = () => {
             toast.error('Error sending email');
         }
     }
-    
+
 
     const handleSave = () => {
-        const url = 'https://localhost:7295/api/User';
+        let formIsValid = true;
 
-        const data = {
-            "userID": 0,
-            "username": name,
-            "userEmail": email,
-            "password": password,
-            "role": role,
-            "StoreID" : store
+        if (!name) {
+            setNameError('Name is required');
+            formIsValid = false;
+        } else {
+            setNameError('');
         }
-        console.log(data);
-        axios.post(url, data,{headers})
-            .then((result) => {
-                handleCloseAdd();
-                getData();
-                clear();
-                toast.success('User has been added');
-            }).catch((error) => {
-                toast.error(error);
-            })
-    }
+
+        if (!email) {
+            setEmailError('Email is required');
+            formIsValid = false;
+        } else {
+            setEmailError('');
+        }
+
+        if (!password) {
+            setPasswordError('Password is required');
+            formIsValid = false;
+        } else {
+            setPasswordError('');
+        }
+
+        if (!role) {
+            setRoleError('Role is required');
+            formIsValid = false;
+        } else {
+            setRoleError('');
+        }
+
+        if (!store) {
+            setStoreError('Store ID is required');
+            formIsValid = false;
+        } else {
+            setStoreError('');
+        }
+
+        if (formIsValid) {
+            // Proceed with saving the user
+            const url = 'https://localhost:7295/api/User';
+            const data = {
+                "userID": 0,
+                "username": name,
+                "userEmail": email,
+                "password": password,
+                "role": role,
+                "StoreID": store
+            };
+            axios.post(url, data, { headers })
+                .then((result) => {
+                    handleCloseAdd();
+                    getData();
+                    clear();
+                    toast.success('User has been added');
+                })
+                .catch((error) => {
+                    toast.error(error);
+                });
+        }
+    };
+
     const handleClearFilters = () => {
         setSearch('');
         setRoleFilter('');
     }
+
+    const clearErrors = () => {
+        setNameError('');
+        setEmailError('');
+        setPasswordError('');
+        setRoleError('');
+        setStoreError('');
+    };
 
     const clear = () => {
         setName('');
@@ -315,24 +419,45 @@ const Users = () => {
                         <Modal.Title>Update details of the User</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Row>
-                            <Col>
-                                
-                                <input type="text" className="form-control w-auto m-4" placeholder="Enter Name"
-                                    value={editName} onChange={(e) => setEditName(e.target.value)} />
-                            </Col>
-                            <Col>
-                                <input type="text" className="form-control w-auto m-4" placeholder="Enter UserEmail"
-                                    value={editEmail} onChange={(e) => setEditEmail(e.target.value)} />
-                            </Col>
-                            <Col>
-                                <input type="text" className="form-control w-auto m-4" placeholder="Enter Password"
-                                    value={editPassword} onChange={(e) => setEditPassword(e.target.value)} />
-                            </Col>
-
-                            <Col>
-                                <select className="form-control w-auto m-4" value={editRole} onChange={(e) => setEditRole(e.target.value)} selectedvalue={editRole}>
-                                    <option value={editRole}>{editRole}</option>
+                        <Form>
+                            <FormGroup>
+                                <FormLabel>Name</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Enter Name"
+                                    value={editName}
+                                    onChange={(e) => setEditName(e.target.value)}
+                                />
+                                <div className="text-danger">{editNameError}</div>
+                            </FormGroup>
+                            <FormGroup>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Enter UserEmail"
+                                    value={editEmail}
+                                    onChange={(e) => setEditEmail(e.target.value)}
+                                />
+                                <div className="text-danger">{editEmailError}</div>
+                            </FormGroup>
+                            <FormGroup>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Enter Password"
+                                    value={editPassword}
+                                    onChange={(e) => setEditPassword(e.target.value)}
+                                />
+                                <div className="text-danger">{editPasswordError}</div>
+                            </FormGroup>
+                            <FormGroup>
+                                <FormLabel>Role</FormLabel>
+                                <FormControl
+                                    as="select"
+                                    value={editRole}
+                                    onChange={(e) => setEditRole(e.target.value)}
+                                >
+                                    <option value=""> --Select Role--</option>
                                     <option value="Admin">Admin</option>
                                     <option value="Information Officer">Information Officer</option>
                                     <option value="User">User</option>
@@ -340,15 +465,20 @@ const Users = () => {
                                     <option value="HR">HR</option>
                                     <option value="Supervisor">Supervisor</option>
                                     <option value="TeamLead">TeamLead</option>
-                                </select>
-                            </Col>
-
-                            <Col>
-                                <input type="text" className="form-control w-auto m-4" placeholder="Enter StoreID"
-                                    value={editStore} onChange={(e) => setEditStore(e.target.value)} />
-                            </Col>
-
-                        </Row>
+                                </FormControl>
+                                <div className="text-danger">{editRoleError}</div>
+                            </FormGroup>
+                            <FormGroup>
+                                <FormLabel>Store ID</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Enter StoreID"
+                                    value={editStore}
+                                    onChange={(e) => setEditStore(e.target.value)}
+                                />
+                                <div className="text-danger">{editStoreError}</div>
+                            </FormGroup>
+                        </Form>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>
@@ -360,46 +490,74 @@ const Users = () => {
                     </Modal.Footer>
                 </Modal>
 
+
+
                 {/* Modal pop for adding new user */}
                 <Modal show={showadd} onHide={handleCloseAdd}>
                     <Modal.Header closeButton>
                         <Modal.Title>Add a new User</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Row>
-                            <Col>
-                                <input type="text" className="form-control" placeholder="Enter Name"
-                                    value={name} onChange={(e) => setName(e.target.value)} />
-                            </Col>
-
-                            <Col>
-                                <input type="text" className="form-control" placeholder="Enter UserEmail"
-                                    value={email} onChange={(e) => setEmail(e.target.value)} />
-                            </Col>
-
-                            <Col>
-                                <input type="text" className="form-control" placeholder="Enter Password"
-                                    value={password} onChange={(e) => setPassword(e.target.value)} />
-                            </Col>
-
-                            <Col>
-                                <select className="form-control" value={role} onChange={(e) => setRole(e.target.value)} selectedvalue={role}>
-                                    <option value="" disabled> --Select Role--</option>
-                                    <option value="Admin" >Admin </option>
+                        <Form>
+                            <FormGroup>
+                                <FormLabel>Name</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Enter Name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                                <div className="text-danger">{nameError}</div>
+                            </FormGroup>
+                            <FormGroup>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Enter Email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                                <div className="text-danger">{emailError}</div>
+                            </FormGroup>
+                            <FormGroup>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl
+                                    type="password"
+                                    placeholder="Enter Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <div className="text-danger">{passwordError}</div>
+                            </FormGroup>
+                            <FormGroup>
+                                <FormLabel>Role</FormLabel>
+                                <FormControl
+                                    as="select"
+                                    value={role}
+                                    onChange={(e) => setRole(e.target.value)}
+                                >
+                                    <option value=""> --Select Role--</option>
+                                    <option value="Admin">Admin</option>
                                     <option value="Information Officer">Information Officer</option>
-                                    <option value="User" >User </option>
-                                    <option value="Manager" >Manager </option>
-                                    <option value="HR" >HR </option>
-                                    <option value="Supervisor" >SuperVisor </option>
-                                    <option value="TeamLead" >TeamLead </option>
-                                </select>
-                            </Col>
-
-                            <Col>
-                                <input type="text" className="form-control" placeholder="Enter StoreID"
-                                    value={store} onChange={(e) => setStore(e.target.value)} />
-                            </Col>
-                        </Row>
+                                    <option value="User">User</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="HR">HR</option>
+                                    <option value="Supervisor">Supervisor</option>
+                                    <option value="TeamLead">TeamLead</option>
+                                </FormControl>
+                                <div className="text-danger">{roleError}</div>
+                            </FormGroup>
+                            <FormGroup>
+                                <FormLabel>Store ID</FormLabel>
+                                <FormControl
+                                    type="number"
+                                    placeholder="Enter Store ID"
+                                    value={store}
+                                    onChange={(e) => setStore(e.target.value)}
+                                />
+                                <div className="text-danger">{storeError}</div>
+                            </FormGroup>
+                        </Form>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleCloseAdd}>

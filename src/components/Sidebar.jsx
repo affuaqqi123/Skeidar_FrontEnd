@@ -5,10 +5,13 @@ import {
     FaBars,
     FaUser,
     FaUsers,
-    FaChalkboardUser,
-    FaChalkboard
+    FaPeopleRoof,
+    FaChalkboard,
+    FaGraduationCap,
+    FaUserGroup
 } from "react-icons/fa";
 import { NavLink } from 'react-router-dom';
+
 
 
 
@@ -41,7 +44,7 @@ const Sidebar = ({ children }) => {
             {
                 path: "/quiz",
                 name: "Quiz",
-                icon: <FaUser />
+                icon: <FaGraduationCap />
             },
             {
                 path: "/usergroup",
@@ -72,7 +75,7 @@ const Sidebar = ({ children }) => {
     return (
 
         <div className="cont">
-            <div style={{ width: isOpen ? "200px" : "50px" }} className="sideb">
+            <div style={{ width: isOpen ? "200%" : "50%" }} className="sideb">
                 <div className="top_section">
                     <div style={{ marginLeft: isOpen ? "0px" : "0px" }} className="bars">
                         <FaBars onClick={toggle} />

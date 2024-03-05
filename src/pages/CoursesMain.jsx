@@ -19,7 +19,10 @@ import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 const CoursesMain = () => {
 
   const userDetails = JSON.parse(localStorage.getItem('userDetails'));
-  const headers = { 'Authorization': userDetails.token }; // auth header with bearer token
+  const  headers= {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${userDetails.token}`
+  }
 
   const { id } = useParams();
   const [courseStepDetails, setCourseStepDetails] = useState([]);
@@ -69,6 +72,8 @@ const CoursesMain = () => {
   const [editContentType, setEditContentType] = useState('')
   const [editDescription, setEditDescription] = useState('')
 
+  //Validation Variable
+  const [stepNumberError, setStepNumberError] = useState('');
 
   const [newStepData, setNewStepData] = useState({
     courseNumber: id,
@@ -110,7 +115,7 @@ const CoursesMain = () => {
         setImageFileNames(fileNames);
         const responses = await Promise.all(
           fileNames.map(async (fileName) => {
-            return await axios.get(`https://localhost:7295/api/CourseStep/filecontent?CourseID=${step.courseID}&StepNo=${step.stepNo}&ContentType=${step.contentType}&FileName=${fileName}`, { responseType: 'arraybuffer' }, { headers });
+            return await axios.get(`https://localhost:7295/api/CourseStep/filecontent?CourseID=${step.courseID}&StepNo=${step.stepNo}&ContentType=${step.contentType}&FileName=${fileName}`, { responseType: 'arraybuffer' ,  headers });
           })
         );
 
@@ -134,7 +139,7 @@ const CoursesMain = () => {
         const fileNames = step.stepContent.split(',');
         const responses = await Promise.all(
           fileNames.map(async (fileName) => {
-            return await axios.get(`https://localhost:7295/api/CourseStep/filecontent?CourseID=${step.courseID}&StepNo=${step.stepNo}&ContentType=${step.contentType}&FileName=${fileName}`, { responseType: 'arraybuffer' }, { headers });
+            return await axios.get(`https://localhost:7295/api/CourseStep/filecontent?CourseID=${step.courseID}&StepNo=${step.stepNo}&ContentType=${step.contentType}&FileName=${fileName}`, { responseType: 'arraybuffer' ,  headers });
           })
         );
 
@@ -399,6 +404,25 @@ const CoursesMain = () => {
       })
   }
 
+  const validateStepNumber = (value) => {
+    if (!/^\d+$/.test(value)) {
+      return 'Please enter only numbers';
+    }
+   else if (parseInt(value) < 1 || parseInt(value) > 1000) {
+    return 'Step Number should be more than 0';
+  }
+    return '';
+  };
+
+
+  const handleStepNumberChange = (e) => {
+    const value = e.target.value;
+    const errorMessage = validateStepNumber(value);
+    setStepNumberError(errorMessage);
+    setNewStepData(prevData => ({ ...prevData, stepNumber: value }));
+  };
+
+
   //Add New Step
   const handleSave = () => {
     if (!newStepData.courseNumber || !newStepData.stepNumber || !newStepData.stepTitle) {
@@ -430,6 +454,7 @@ const CoursesMain = () => {
         console.error('Error adding new step:', error);
       });
   };
+
   return (
     <div className="container">
       <div className="left-container">
@@ -496,19 +521,23 @@ const CoursesMain = () => {
           <Modal.Title>Add a new step</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Row>
-            <Col>
-              <input type='text' className='form-control' placeholder='Enter Course Number' value={newStepData.courseNumber} disabled />
-            </Col>
-            <Col>
-              <input type='text' className='form-control' placeholder='Enter Step Number' value={newStepData.stepNumber} onChange={(e) => setNewStepData(prevData => ({ ...prevData, stepNumber: e.target.value }))} />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+          <div>
+              <input type='number' className='form-control mb-3' placeholder='Enter Course Number' value={newStepData.courseNumber} disabled />
+              </div>
+              <div>
+              <input
+                type='text'
+                className='form-control mb-3'
+                placeholder='Enter Step Number'
+                value={newStepData.stepNumber}
+                onChange={handleStepNumberChange}
+              />
+              {stepNumberError && <p className="text-danger">{stepNumberError}</p>}
+              </div>
+          
+              <div>
               <input type='text' className='form-control my-3' placeholder='Enter Step Title' value={newStepData.stepTitle} onChange={(e) => setNewStepData(prevData => ({ ...prevData, stepTitle: e.target.value }))} />
-            </Col>
-          </Row>
+              </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant='secondary' onClick={handleCloseAdd}>

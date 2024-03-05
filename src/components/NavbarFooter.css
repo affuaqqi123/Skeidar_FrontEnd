@@ -1,3 +1,8 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
 .headerpage {
     position: relative;
@@ -6,7 +11,7 @@
 
 .navbar {
     width: 100%;
-    min-width: 320px;
+    /* min-width: 320px; */
     height: 80px;
     display: flex;
     align-items: center;
@@ -39,10 +44,11 @@ ul li {
 .footer {
     background: black;
     text-align: center;
-    height: 50px;
+    height: 20px;
     color: #fff;
-    min-width: 600px;
+    /* min-width: 600px; */
     padding-top: 10px;
+    margin-top: -7px;
 }
 
 .logout-button {
@@ -56,32 +62,167 @@ ul li {
 }
 
 .logout-button:hover {
-    background-image: linear-gradient( 135deg, #FFDB01 10%, #0E197D 100%);
-    color: black;
+    background: #292F2A;
+    color: white;
     font-weight: 500;
 
 }
 
-
-@media only screen and (max-width: 450px) {
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
     .logo {
-        max-width: 150px;
+        max-width: 100px; 
         height: auto;
+        margin-left: 20px;
+    }
 
+    .logout-button {
+        padding: 3px 5px;
+        font-size: 8px;
     }
 
     ul li {
-        font-size: 10px;
+        font-size: 9px;
     }
 
     .navbar {
         padding: 10px;
+        width: 100%;
+        /* max-width: 600px; */
+        /* height: 50px; */
+    }
+
+    .footer {
+        height: 40px;
+        font-size: 12px;
+        width: 100%;
+        /* max-width: 600px; */
+
+    }
+}
+@media only screen and (min-width: 601px) and (max-width: 767px){
+    .logo {
+        max-width: 140px;
+        height: auto;
+        margin-left: 20px;
     }
 
     .logout-button {
-        margin-right: 10px;
+        padding: 4px 7px;
+        font-size: 15px;
     }
 
+    ul li {
+        font-size: 15px;
+    }
+
+    .navbar {
+        padding: 20px;
+        /* width: 100%;
+        max-width: 767px; */
+       
+    }
+
+ 
+
+    .footer {
+        height: 40px;
+        font-size: 18px;
+        /* width: 800px; */
+
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 991px){
+    .logo {
+        max-width: 200px;
+        height: auto;
+        margin-left: 20px;
+    }
+
+    .logout-button {
+        padding: 7px 9px;
+        font-size: 15px;
+    }
+
+    ul li {
+        font-size: 23px;
+    }
+
+    .navbar {
+        padding: 20px;
+        /* width: 1000px; */
+       
+    }
+
+   
+    .footer {
+        height: 40px;
+        font-size: 20px;
+        /* width: 1000px; */
+    }
+}
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .logo {
+        max-width: 230px;
+        height: auto;
+        margin-left: 25px;
+    }
+
+    .logout-button {
+        padding: 10px 12px;
+        font-size: 20px;
+    }
+
+    ul li {
+        font-size: 26px;
+    }
+
+    .navbar {
+        padding: 20px;
+        /* width: 1200px; */
+      
+    }
+
+    .logout-button {
+        margin-right: 15px;
+    }
+
+    .footer {
+        height: 40px;
+        font-size: 25px;
+        /* width: 1200px; */
+    }
 }
 
-;
+@media only screen and (min-width: 1200px) {
+    .logo {
+        width: 530px;
+        height: auto;
+        margin-left: 25px;
+    }
+
+    .logout-button {
+        padding: 10px 12px;
+        font-size: 23px;
+    }
+
+    ul li {
+        font-size: 28px;
+    }
+
+    .navbar {
+        padding: 20px;
+        /* width: 1730px; */
+        
+    }
+
+    .logout-button {
+        margin-right: 15px;
+    }
+
+    .footer {
+        height: 40px;
+        font-size: 25px;
+        /* width: 1730px; */
+    }
+}

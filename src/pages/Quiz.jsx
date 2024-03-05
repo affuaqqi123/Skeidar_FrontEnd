@@ -8,10 +8,20 @@ import 'react-toastify/dist/ReactToastify.css';
 import {useNavigate } from 'react-router-dom';
 
 const Quiz = () => {
-    const navigate = useNavigate();
+    
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
-    const headers = { 'Authorization': userDetails.token }; // auth header with bearer token
+    
+    const headers = { 
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${userDetails.token}`
+    }; // auth header with bearer token
 
+    const headerjsondata = { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userDetails.token}`
+    }; // auth header with bearer token
+
+    const navigate = useNavigate();
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -20,6 +30,7 @@ const Quiz = () => {
     const handleCloseAdd = () => {
         setShowAdd(false);
         clear();
+        clearErrors();
     };
     const handleShowAdd = () => setShowAdd(true);
 
@@ -32,23 +43,49 @@ const Quiz = () => {
     const [newTitle, setNewTitle] = useState('');
     const [newDescription, setNewDescription] = useState('');
     const [newCourseID, setNewCourseID] = useState('');
+    const [courseData, setCourseData] = useState([]);
+    const [courseID, setCourseID] = useState('');
+    const [courseName, setCourseName]=useState('');
+
+
+    //Error Handling
+    const [courseNameError, setCourseNameError] = useState('');
+    const [quizTitleError, setQuizTitleError] = useState('');
+
+    const [editCourseNameError, setEditCourseNameError] = useState('');
+    const [editQuizTitleError, setEditQuizTitleError] = useState('');
 
     useEffect(() => {
         getData();
+        fetchCourseData();
     }, []);
 
     const getData = () => {
-        axios.get('https://localhost:7295/api/Quiz', { headers })
+        axios.get('https://localhost:7295/api/Quiz', { headerjsondata })
             .then((result) => {
                 setData(result.data);
+                clear();
             })
             .catch((error) => {
                 console.log(error);
             });
     };
 
+    const fetchCourseData = () => {
+       
+        axios.get('https://localhost:7295/api/Course', { headers })
+            .then((result) => {
+                debugger;
+                setCourseData(result.data);
+                console.log("the value of coursename is :",result.data[0].courseName);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
     const handleEdit = (id) => {
-        axios.get(`https://localhost:7295/api/Quiz/${id}`, { headers })
+        axios.get(`https://localhost:7295/api/Quiz/${id}`, { headerjsondata })
             .then((result) => {
                 setEditID(id);
                 setEditTitle(result.data.title);
@@ -63,7 +100,7 @@ const Quiz = () => {
 
     const handleDelete = (id) => {
         if (window.confirm('Are you sure you want to delete this quiz?')) {
-            axios.delete(`https://localhost:7295/api/Quiz/${id}`, { headers })
+            axios.delete(`https://localhost:7295/api/Quiz/${id}`, { headerjsondata })
                 .then((result) => {
                     toast.success('Quiz has been deleted');
                     getData();
@@ -75,14 +112,34 @@ const Quiz = () => {
     };
 
     const handleUpdate = () => {
+
+        let formIsValid = true;
+
+
+        if (!editCourseID) {
+            setEditCourseNameError('Please select a CourseName');
+            formIsValid = false;
+        } else {
+            setEditCourseNameError('');
+        }
+
+        if (!editTitle) {
+            setEditQuizTitleError('Quiz Title is required');
+            formIsValid = false;
+        } else {
+            setEditQuizTitleError('');
+        }
+
+        if (formIsValid) {
         const url = `https://localhost:7295/api/Quiz/${editID}`;
         const data = {
-            quizID: editID,
-            title: editTitle,
-            description: editDescription,
-            courseID: editCourseID
+            "quizID": editID,
+            "courseID": editCourseID,
+            "title": editTitle,
+            "description": editDescription
+           
         };
-        axios.put(url, data, { headers })
+        axios.put(url, data,{ headerjsondata })
             .then((result) => {
                 handleClose();
                 getData();
@@ -92,16 +149,38 @@ const Quiz = () => {
             .catch((error) => {
                 toast.error(error);
             });
+        }
     };
 
     const handleSave = () => {
-        const url = 'https://localhost:7295/api/Quiz';
+        let formIsValid = true;
+
+
+        if (!newCourseID) {
+            setCourseNameError('Please select a CourseName');
+            formIsValid = false;
+        } else {
+            setCourseNameError('');
+        }
+
+        if (!newTitle) {
+            setQuizTitleError('Quiz Title is required');
+            formIsValid = false;
+        } else {
+            setQuizTitleError('');
+        }
+
+        if (formIsValid) {
+        const url = 'https://localhost:7295/api/Quiz';      
         const data = {
-            title: newTitle,
-            description: newDescription,
-            courseID: newCourseID
+            "quizID": 0,
+            "courseID": newCourseID,
+            "title": newTitle,
+            "description": newDescription
+            
         };
-        axios.post(url, data, { headers })
+        axios.post(url, data,{ headerjsondata })
+       
             .then((result) => {
                 handleCloseAdd();
                 getData();
@@ -111,11 +190,25 @@ const Quiz = () => {
             .catch((error) => {
                 toast.error(error);
             });
+        }
     };
     const handleAddQuestions = (quizid) => {
 
         navigate(`/questions/${quizid}`);
     }
+
+    const getCourseNameById = (courseId) => {
+        const crs = courseData.find((crsdt) => crsdt.courseID === courseId);
+        return crs ? crs.courseName : 'No Course';
+    };
+
+    const clearErrors = () => {
+        setCourseNameError('');
+        setQuizTitleError('');
+        setEditCourseNameError('');
+        setEditQuizTitleError('');
+        
+    };
 
     const clear = () => {
         setEditID('');
@@ -140,8 +233,8 @@ const Quiz = () => {
                     <thead>
                         <tr>
                             <th className='text-center'>#</th>
-                            <th className='text-center'>CourseID</th>
-                            <th className='text-center'>Title</th>
+                            <th className='text-center'>CourseName</th>
+                            <th className='text-center'>Quiz Title</th>
                             <th className='text-center'>Description</th>
                             <th className='text-center'>Actions</th>
                         </tr>
@@ -150,7 +243,9 @@ const Quiz = () => {
                         {data.map((d, i) => (
                             <tr key={i}>
                                 <td className='text-center'>{i + 1}</td>
-                                <td className='text-center'>{d.courseID}</td>
+                                <td className='text-center'>{
+                                getCourseNameById(d.courseID)
+                                }</td>
                                 <td className='text-center'>{d.title}</td>
                                 <td className='text-center'>{d.description}</td>
                                 <td className='text-center'>
@@ -167,18 +262,37 @@ const Quiz = () => {
                         <Modal.Title>Edit Quiz</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                    <div >
+                    <label >Select Course:</label>
+                                  <br />
+                                  <select
+                                      className='form-control mb-3'
+                                      value={editCourseID}
+                                      onChange={(e) => setEditCourseID(e.target.value)}
+                                  >
+                                      <option value='' >Select Course</option>
+                                      {courseData.map((data) => (
+                                          <option key={data.courseID} value={data.courseID}>
+                                              {data.courseName}
+                                          </option>
+                                      ))}
+                                  </select>
+
+                            {/* <label htmlFor="editCourseID" className="form-label">Course ID</label>
+                            <input type="text" className="form-control" id="editCourseID" value={editCourseID} onChange={(e) => setEditCourseID(e.target.value)} />
+                        */}
+                        <div className="text-danger">{editCourseNameError}</div>
+                        </div> 
                         <div className="mb-3">
                             <label htmlFor="editTitle" className="form-label">Title</label>
                             <input type="text" className="form-control" id="editTitle" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+                            <div className="text-danger">{editQuizTitleError}</div>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="editDescription" className="form-label">Description</label>
                             <textarea className="form-control" id="editDescription" rows="3" value={editDescription} onChange={(e) => setEditDescription(e.target.value)}></textarea>
                         </div>
-                        <div className="mb-3">
-                            <label htmlFor="editCourseID" className="form-label">Course ID</label>
-                            <input type="text" className="form-control" id="editCourseID" value={editCourseID} onChange={(e) => setEditCourseID(e.target.value)} />
-                        </div>
+                        
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>
@@ -195,18 +309,33 @@ const Quiz = () => {
                         <Modal.Title>Add New Quiz</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                    <div >
+                    <select
+                                      className='form-control mb-3'
+                                      value={newCourseID}
+                                      onChange={(e) => setNewCourseID(e.target.value)}
+                                  >
+                                      <option value=''>Select Course Name</option>
+                                      {courseData.map((data) => (
+                                          <option key={data.courseID} value={data.courseID}>
+                                              {data.courseName}
+                                          </option>
+                                      ))}
+                                  </select>
+                                  <div className="text-danger">{courseNameError}</div>
+                            {/* <label htmlFor="newCourseID" className="form-label">Course ID</label>
+                            <input type="text" className="form-control" id="newCourseID" value={newCourseID} onChange={(e) => setNewCourseID(e.target.value)} /> */}
+                        </div>
                         <div className="mb-3">
                             <label htmlFor="newTitle" className="form-label">Title</label>
                             <input type="text" className="form-control" id="newTitle" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+                            <div className="text-danger">{quizTitleError}</div>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="newDescription" className="form-label">Description</label>
                             <textarea className="form-control" id="newDescription" rows="3" value={newDescription} onChange={(e) => setNewDescription(e.target.value)}></textarea>
                         </div>
-                        <div className="mb-3">
-                            <label htmlFor="newCourseID" className="form-label">Course ID</label>
-                            <input type="text" className="form-control" id="newCourseID" value={newCourseID} onChange={(e) => setNewCourseID(e.target.value)} />
-                        </div>
+                        
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleCloseAdd}>

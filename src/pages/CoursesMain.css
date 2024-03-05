@@ -1,3 +1,8 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 .container {
   display: flex;
   justify-content: space-between;
@@ -103,4 +108,45 @@
 
 .btn.active {
   font-size: 15px;
+}
+.maincntn{
+  width: auto;
+
+}
+
+@media only screen and (max-width: 600px) {
+  .maincntn{
+    max-width: 100%;
+    margin: 0px !important;       
+  }
+  @page {
+    size: landscape; /* Set the page orientation to landscape */
+  }
+}
+
+@media only screen and (min-width: 601px) and (max-width: 767px) {
+  .maincntn{
+    max-width: 100%;     
+  }
+  @page {
+    size: landscape; /* Set the page orientation to landscape */
+  }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .maincntn{
+    max-width: 100%;
+  }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .maincntn{
+    max-width: 100%;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .maincntn{
+    max-width: 100%;
+  }
 }

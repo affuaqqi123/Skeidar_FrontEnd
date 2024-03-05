@@ -11,6 +11,7 @@ import CoursesMain from './pages/CoursesMain.jsx';
 import StartCoursePage from './pages/StartCoursePage.jsx';
 import Users from './pages/Users.jsx';
 import Quiz from './pages/Quiz.jsx';
+import StartQuiz from './pages/StartQuiz.jsx';
 import Questions from './pages/Questions.jsx';
 import UserGroup from './pages/UserGroup.jsx';
 import Navbar from './components/Navbar.jsx';
@@ -34,7 +35,7 @@ function App() {
   };
 
   return (
-    <div >
+    <div className='dimsns'>
       {!isLoggedIn && (
         <BrowserRouter>
           <Routes>
@@ -59,6 +60,7 @@ function App() {
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/quiz" element={<Quiz />} />
+                <Route path="/startquiz/:courseid" element={<StartQuiz />} />
                 <Route path="/questions/:quizid" element={<Questions />} />
                 <Route path="/usergroup" element={<UserGroup />} />
                 <Route path="/groups" element={<Groups />} />
