@@ -78,10 +78,13 @@ const Courses = () => {
   const [editGrpNameError, setEditGrpNameError] = useState('');
   const [editCourseNameError, setEditCourseNameError] = useState('');
 
-
+    //Environment variables
+    const apiUrl=process.env.REACT_APP_API_URL;
   
       useEffect(() => {
           fetchGroupData();
+          console.log("env value :",apiUrl);
+          console.log("process . evn testing",process.env);
       }, []);
   
       useEffect(() => {
@@ -93,9 +96,9 @@ const Courses = () => {
       }, [userGroupData]);
   
   
-      const fetchGroupData = () => {
-          axios.get('https://localhost:7295/api/Group', { headers })
-              .then((result) => {              
+      const fetchGroupData = () => {        
+          axios.get(`${apiUrl}/Group`, { headers })
+              .then((result) => {                             
                 console.log('fecthgroupdata : ', result.data);
                   setGroupData(result.data);
               })
@@ -107,7 +110,7 @@ const Courses = () => {
       const fetchUserGroupData =async () => {
         const currentUserId = userDetails.userID;
         if (userRole !== "Admin") {
-           await axios.get('https://localhost:7295/api/UserGroup', { headers })
+           await axios.get(`${apiUrl}/UserGroup`, { headers })
                 .then((result) => {
                     
                     console.log('fetchusergroupdata : ', result.data)
@@ -128,7 +131,7 @@ const Courses = () => {
       };
   
       const getData = () => {
-        axios.get('https://localhost:7295/api/Course', { headers })
+        axios.get(`${apiUrl}/Course`, { headers })
             .then((result) => {
                 const userDetails = JSON.parse(localStorage.getItem('userDetails'));
                 const userRole = userDetails.role;
@@ -185,7 +188,7 @@ const Courses = () => {
       const handleEdit = (id) => {
           //alert(id);
           handleShow();
-          axios.get(`https://localhost:7295/api/Course/${id}`, { headers })
+          axios.get(`${apiUrl}/Course/${id}`, { headers })
               .then((result) => {
                   setEditCourseName(result.data.courseName);
                   setEditCourseDes(result.data.description);
@@ -200,7 +203,7 @@ const Courses = () => {
   
       const handleDelete = (id) => {
           if (window.confirm("Are you sure to delete this Course") == true) {
-              axios.delete(`https://localhost:7295/api/Course/${id}`, { headers })
+              axios.delete(`${apiUrl}/Course/${id}`, { headers })
                   .then((result) => {
                       toast.success('Course has been deleted');
                       getData();
@@ -225,7 +228,7 @@ const Courses = () => {
   
       const handleStart = async (id) => {
           try {
-              const response = await axios.get(`https://localhost:7295/api/UserCourseStep/IsCourseCompleted?userId=${userDetails.userID}&courseId=${id}`,{headers});
+              const response = await axios.get(`${apiUrl}/UserCourseStep/IsCourseCompleted?userId=${userDetails.userID}&courseId=${id}`,{headers});
       
               const isCompleted = response.data;
               console.log("isCompleted", isCompleted);
@@ -248,7 +251,7 @@ const Courses = () => {
   
       const handleAttend = async(courseid) => {
           try {
-              const response = await axios.get(`https://localhost:7295/api/UserCourseStep/IsCourseCompleted?userId=${userDetails.userID}&courseId=${courseid}`,{headers});
+              const response = await axios.get(`${apiUrl}/UserCourseStep/IsCourseCompleted?userId=${userDetails.userID}&courseId=${courseid}`,{headers});
       
               const isCompleted = response.data;
               console.log("isCompleted", isCompleted);
@@ -286,7 +289,7 @@ const Courses = () => {
             setEditGrpNameError('');
         }
         if (formIsValid) {
-          const url = `https://localhost:7295/api/Course/${editID}`;
+          const url = `${apiUrl}/Course/${editID}`;
           const data = {
               "courseID": editID,
               "courseName": editCourseName,
@@ -325,7 +328,7 @@ const Courses = () => {
         if (formIsValid) {
             // Proceed with saving the user
 
-          const url = 'https://localhost:7295/api/Course';
+          const url = `${apiUrl}/Course`;
           const data = {
               "courseID":0,
               "courseName": coursename,

@@ -12,6 +12,9 @@ function Login(props) {
 
     const [localizedStrings, setLocalizedStrings] = useState({});
 
+    //Environment variables
+    const apiUrl=process.env.REACT_APP_API_URL;
+
     useEffect(() => {
         // Fetch localized strings when component mounts
         fetchLocalizedStrings('en-US');
@@ -20,7 +23,7 @@ function Login(props) {
     const fetchLocalizedStrings = async (culture) => {
         try {
 
-            const response = await axios.get(`https://localhost:7295/api/Localization/${culture}`, {
+            const response = await axios.get(`${apiUrl}/Localization/${culture}`, {
                 headers: {
                     'Accept-Language': culture
                 }
@@ -34,7 +37,7 @@ function Login(props) {
 
     const handleLogin = () => {
 
-        axios.post('https://localhost:7295/api/Login', { username, password })
+        axios.post(`${apiUrl}/Login`, { username, password })
             .then(response => {
                 console.log('Login successful:', response.data);
                 localStorage.setItem('userDetails', JSON.stringify(response.data));
@@ -58,13 +61,13 @@ function Login(props) {
                     <button className='btnenglish' onClick={() => fetchLocalizedStrings('en-US')}>English</button>
                     <button className='btnnorwagian' onClick={() => fetchLocalizedStrings('nb-NO')}>Norwegian</button>
                 </div>
-            <Container fluid className="d-flex align-items-center justify-content-center vh-100" style={{ backgroundColor: 'white' }}>
+            <Container fluid className="cntnr d-flex align-items-center justify-content-center vh-100" style={{ backgroundColor: 'white' }}>
                 {/* <h1>{localizedStrings.Welcome}</h1> */}
                 {/* <p>{localizedStrings.Sorry}</p> */}
                 
-                <Row style={{ maxWidth: '600px' }} className="justify-content-md-center mt-1 w-100 border border-4 p-5">
+                <Row style={{ maxWidth: '600px' }} className="loginbox justify-content-md-center mt-1 w-100 border border-4">
                     <Col xs={12} md={6} style={{ maxWidth: '600px' }} >
-                        <h2 className="text-center mb-4">{localizedStrings.Login}</h2>
+                        <h2 className="logintitle text-center">{localizedStrings.Login}</h2>
                         <Form>
                             <Form.Group controlId="formUsername">
                                 <Form.Label>{localizedStrings.UserName}:</Form.Label>
@@ -88,7 +91,7 @@ function Login(props) {
                                 />
                             </Form.Group>
                             <div className='text-center '>
-                                <Button variant="primary" type="button" className='mt-3 justify-content-md-center mt-5 w-50 ' onClick={handleLogin}>
+                                <Button variant="primary" type="button" className='btnlgn justify-content-md-center w-50 ' onClick={handleLogin}>
                                 {localizedStrings.Login}
                                 </Button>
                             </div>

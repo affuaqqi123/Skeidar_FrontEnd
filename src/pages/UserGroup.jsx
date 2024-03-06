@@ -41,6 +41,9 @@ const UserGroups = () => {
       const [groupData, setGroupData] = useState([]);
       const [data, setData] = useState([]);
       const [error, setError] = useState(null);
+
+      //Environment variables
+    const apiUrl=process.env.REACT_APP_API_URL;
   
       useEffect(() => {
           getData();
@@ -49,7 +52,7 @@ const UserGroups = () => {
       }, []);
   
       const getData = () => {
-          axios.get('https://localhost:7295/api/UserGroup', { headers })
+          axios.get(`${apiUrl}/UserGroup`, { headers })
               .then((result) => {
                   setData(result.data);
                   clear();
@@ -60,7 +63,7 @@ const UserGroups = () => {
       };
   
       const fetchUserData = () => {
-          axios.get('https://localhost:7295/api/User', { headers })
+          axios.get(`${apiUrl}/User`, { headers })
               .then((result) => {
                   setUserData(result.data);
               })
@@ -70,7 +73,7 @@ const UserGroups = () => {
       };
   
       const fetchGroupData = () => {
-          axios.get('https://localhost:7295/api/Group', { headers })
+          axios.get(`${apiUrl}/Group`, { headers })
               .then((result) => {
                   setGroupData(result.data);
               })
@@ -108,7 +111,7 @@ const UserGroups = () => {
   
       const handleEdit = (id) => {
           handleShow();
-          axios.get(`https://localhost:7295/api/UserGroup/${id}`, { headers })
+          axios.get(`${apiUrl}/UserGroup/${id}`, { headers })
               .then((result) => {
                   setEditUserID(result.data.userID);
                   setEditGroupID(result.data.groupID);
@@ -121,7 +124,7 @@ const UserGroups = () => {
   
       const handleDelete = (id) => {
           if (window.confirm('Are you sure to delete this UserGroup?')) {
-              axios.delete(`https://localhost:7295/api/UserGroup/${id}`, { headers })
+              axios.delete(`${apiUrl}/UserGroup/${id}`, { headers })
                   .then(() => {
                       toast.success('UserGroup has been deleted');
                       getData();
@@ -133,7 +136,7 @@ const UserGroups = () => {
       };
   
       const handleUpdate = () => {
-          const url = `https://localhost:7295/api/UserGroup/${editID}`;
+          const url = `${apiUrl}/UserGroup/${editID}`;
           const updatedData = {
               userGroupID: editID,
               userID: editUserID,
@@ -153,7 +156,7 @@ const UserGroups = () => {
       };
   
       const handleSave = () => {
-          const url = 'https://localhost:7295/api/UserGroup';
+          const url = `${apiUrl}/UserGroup`;
           const newData = {
               userID,
               groupID,

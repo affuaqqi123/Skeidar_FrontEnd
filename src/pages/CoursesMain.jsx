@@ -82,9 +82,12 @@ const CoursesMain = () => {
 
   });
 
+  //Environment variables
+  const apiUrl=process.env.REACT_APP_API_URL;
+
   const fetchCourseSteps = async () => {
     try {
-      const response = await axios.get(`https://localhost:7295/api/CourseStep/Course/${id}`, { headers });
+      const response = await axios.get(`${apiUrl}/CourseStep/Course/${id}`, { headers });
       //Steps in ascending order
       const sortedData = response.data.slice().sort((a, b) => a.stepNo - b.stepNo);
       setCourseStepDetails(sortedData);
@@ -115,7 +118,7 @@ const CoursesMain = () => {
         setImageFileNames(fileNames);
         const responses = await Promise.all(
           fileNames.map(async (fileName) => {
-            return await axios.get(`https://localhost:7295/api/CourseStep/filecontent?CourseID=${step.courseID}&StepNo=${step.stepNo}&ContentType=${step.contentType}&FileName=${fileName}`, { responseType: 'arraybuffer' ,  headers });
+            return await axios.get(`${apiUrl}/CourseStep/filecontent?CourseID=${step.courseID}&StepNo=${step.stepNo}&ContentType=${step.contentType}&FileName=${fileName}`, { responseType: 'arraybuffer' ,  headers });
           })
         );
 
@@ -139,7 +142,7 @@ const CoursesMain = () => {
         const fileNames = step.stepContent.split(',');
         const responses = await Promise.all(
           fileNames.map(async (fileName) => {
-            return await axios.get(`https://localhost:7295/api/CourseStep/filecontent?CourseID=${step.courseID}&StepNo=${step.stepNo}&ContentType=${step.contentType}&FileName=${fileName}`, { responseType: 'arraybuffer' ,  headers });
+            return await axios.get(`${apiUrl}/CourseStep/filecontent?CourseID=${step.courseID}&StepNo=${step.stepNo}&ContentType=${step.contentType}&FileName=${fileName}`, { responseType: 'arraybuffer' ,  headers });
           })
         );
 
@@ -192,7 +195,7 @@ const CoursesMain = () => {
   const handleRemoveFile = async (fileName) => {
     if (selectedStep) {
       console.log("remove image called")
-      const apiEndpoint = `https://localhost:7295/api/CourseStep/removefile?CourseID=${selectedStep.courseID}&StepID=${selectedStep.stepNo}&ContentType=${selectedStep.contentType}&FileName=${fileName}`;
+      const apiEndpoint = `${apiUrl}/CourseStep/removefile?CourseID=${selectedStep.courseID}&StepID=${selectedStep.stepNo}&ContentType=${selectedStep.contentType}&FileName=${fileName}`;
 
       try {
         await axios.delete(apiEndpoint, { headers });
@@ -212,7 +215,7 @@ const CoursesMain = () => {
   const saveContentAndDescription = () => {
     if (selectedStep) {
       const encodedDescription = encodeURIComponent(descriptionContent);
-      const apiEndpoint = `https://localhost:7295/api/CourseStep/fileupload?CourseID=${selectedStep.courseID}&StepNo=${selectedStep.stepNo}&StepTitle=${selectedStep.stepTitle}&ContentType=${ContentType}&Description=${encodedDescription}`;
+      const apiEndpoint = `${apiUrl}/CourseStep/fileupload?CourseID=${selectedStep.courseID}&StepNo=${selectedStep.stepNo}&StepTitle=${selectedStep.stepTitle}&ContentType=${ContentType}&Description=${encodedDescription}`;
 
       const formData = new FormData();
 
@@ -345,7 +348,7 @@ const CoursesMain = () => {
   //Deletion of step
   const handleDelete = async (step) => {
     if (window.confirm("Are you sure to delete this Course Step") === true) {
-      await axios.delete(`https://localhost:7295/api/CourseStep/deletestepno?CourseID=${step.courseID}&StepNo=${step.stepNo}`, { headers })
+      await axios.delete(`${apiUrl}/CourseStep/deletestepno?CourseID=${step.courseID}&StepNo=${step.stepNo}`, { headers })
         .then((result) => {
           toast.success('Course Step has been deleted');
           setActiveDiv('');
@@ -363,7 +366,7 @@ const CoursesMain = () => {
   const handleEdit = async (id) => {
 
     handleShowEdit();
-    axios.get(`https://localhost:7295/api/CourseStep/${id}`, { headers })
+    axios.get(`${apiUrl}/CourseStep/${id}`, { headers })
       .then((result) => {
         setEditCourseID(result.data.courseID);
         setEditStepNo(result.data.stepNo);
@@ -383,7 +386,7 @@ const CoursesMain = () => {
 
   const handleUpdate = (step) => {
 
-    const url = `https://localhost:7295/api/CourseStep/${editID}`;
+    const url = `${apiUrl}/CourseStep/${editID}`;
     const data = {
       "id": editID,
       "courseID": editCourseID,
@@ -437,7 +440,7 @@ const CoursesMain = () => {
       contentType: "Text",
       description: "<p>Add Description here</p>"
     };
-    axios.post(`https://localhost:7295/api/CourseStep`, newStep, { headers })
+    axios.post(`${apiUrl}/CourseStep`, newStep, { headers })
       .then(response => {
 
         toast.success('New step added successfully.');

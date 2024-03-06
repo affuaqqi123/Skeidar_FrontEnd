@@ -13,7 +13,7 @@ import {
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const COURSE_API_URL = 'https://localhost:7295/api';
+
 
 const StartCoursePage = () => {
 
@@ -33,14 +33,17 @@ const StartCoursePage = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [videoWatched, setVideoWatched] = useState(false);
 
+  //Environment variables
+  const apiUrl=process.env.REACT_APP_API_URL;
+
   const fetchCourseData = async () => {
     console.log("Entered Fetch");
     try {
-      const response = await axios.get(`${COURSE_API_URL}/CourseStep/Course/${id}`, { headers });
+      const response = await axios.get(`${apiUrl}/CourseStep/Course/${id}`, { headers });
       if (response) {
         const sortedData = response.data.slice().sort((a, b) => a.stepNo - b.stepNo);
         console.log("CourseData", sortedData);
-        let userCourseStepsResponse = await axios.get(`${COURSE_API_URL}/UserCourseStep/ByCourseAndUser/${id}/${userID}`, { headers });
+        let userCourseStepsResponse = await axios.get(`${apiUrl}/UserCourseStep/ByCourseAndUser/${id}/${userID}`, { headers });
         let userSteps = userCourseStepsResponse.data;
         if (userSteps.length === 0) {
           userSteps = sortedData.map((step) => ({
@@ -68,7 +71,7 @@ const StartCoursePage = () => {
 
         if (response.data.length > 0 && response.data[0].contentType === 'Video' && response.data[0].stepNo === firstIncompleteStep.stepNumber) {
           const res = await axios.get(
-            `${COURSE_API_URL}/CourseStep/filecontent?CourseID=${response.data[0].courseID}&StepNo=${response.data[0].stepNo}&ContentType=${response.data[0].contentType}&FileName=${response.data[0].stepContent}`,
+            `${apiUrl}/CourseStep/filecontent?CourseID=${response.data[0].courseID}&StepNo=${response.data[0].stepNo}&ContentType=${response.data[0].contentType}&FileName=${response.data[0].stepContent}`,
             { responseType: 'arraybuffer', headers }
           );
           const blob = new Blob([res.data], { type: 'video/mp4' });
@@ -80,7 +83,7 @@ const StartCoursePage = () => {
           const responses = await Promise.all(
             fileNames.map(async (fileName) => {
               return await axios.get(
-                `${COURSE_API_URL}/CourseStep/filecontent?CourseID=${response.data[0].courseID}&StepNo=${response.data[0].stepNo}&ContentType=${response.data[0].contentType}&FileName=${response.data[0].stepContent}`,
+                `${apiUrl}/CourseStep/filecontent?CourseID=${response.data[0].courseID}&StepNo=${response.data[0].stepNo}&ContentType=${response.data[0].contentType}&FileName=${response.data[0].stepContent}`,
                 { responseType: 'arraybuffer', headers }
               );
             })
@@ -107,9 +110,9 @@ const StartCoursePage = () => {
   const createuserCourseStep = async (userSteps) => {
     try {
       for (const Step of userSteps) {
-        await axios.post(`${COURSE_API_URL}/UserCourseStep`, Step, { headers });
+        await axios.post(`${apiUrl}/UserCourseStep`, Step, { headers });
       }
-      let userCourseStepsResponse = await axios.get(`${COURSE_API_URL}/UserCourseStep/ByCourseAndUser/${id}/${userID}`, { headers });
+      let userCourseStepsResponse = await axios.get(`${apiUrl}/UserCourseStep/ByCourseAndUser/${id}/${userID}`, { headers });
     } catch (error) {
       console.error('Error creating user course steps:', error);
     }
@@ -136,7 +139,7 @@ const StartCoursePage = () => {
         console.log("try");
         setVideoUrl('');
         const response = await axios.get(
-          `${COURSE_API_URL}/CourseStep/filecontent?CourseID=${courseData[currentStep - 1].courseID}&StepNo=${courseData[currentStep - 1].stepNo}&ContentType=${courseData[currentStep - 1].contentType}&FileName=${courseData[currentStep - 1].stepContent}`,
+          `${apiUrl}/CourseStep/filecontent?CourseID=${courseData[currentStep - 1].courseID}&StepNo=${courseData[currentStep - 1].stepNo}&ContentType=${courseData[currentStep - 1].contentType}&FileName=${courseData[currentStep - 1].stepContent}`,
           { responseType: 'arraybuffer', headers }
         );
 
@@ -164,7 +167,7 @@ const StartCoursePage = () => {
         const fileNames = courseData[currentStep - 1].stepContent.split(',');
         const responses = await Promise.all(
           fileNames.map(async (fileName) => {
-            return await axios.get(`${COURSE_API_URL}/CourseStep/filecontent?CourseID=${courseData[currentStep - 1].courseID}&StepNo=${courseData[currentStep - 1].stepNo}&ContentType=${courseData[currentStep - 1].contentType}&FileName=${fileName}`
+            return await axios.get(`${apiUrl}/CourseStep/filecontent?CourseID=${courseData[currentStep - 1].courseID}&StepNo=${courseData[currentStep - 1].stepNo}&ContentType=${courseData[currentStep - 1].contentType}&FileName=${fileName}`
               , { responseType: 'arraybuffer', headers });
           })
         );
@@ -197,7 +200,7 @@ const StartCoursePage = () => {
         const stepNo = courseData[currentStep - 1].stepNo;
         console.log(status, courseId, stepNo);
         await axios.put(
-          `${COURSE_API_URL}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`, { headers }
+          `${apiUrl}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`, { headers }
         );
         navigate('/courses');
       } catch (error) {
@@ -216,7 +219,7 @@ const StartCoursePage = () => {
         const courseId = courseData[currentStep - 1].courseID;
         const stepNo = courseData[currentStep - 1].stepNo;
 
-        const response = await fetch(`${COURSE_API_URL}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`, {
+        const response = await fetch(`${apiUrl}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -260,7 +263,7 @@ const StartCoursePage = () => {
         const courseId = courseData[currentStep - 1].courseID;
         const stepNo = courseData[currentStep - 1].stepNo;
         const response = await fetch(
-          `${COURSE_API_URL}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`,
+          `${apiUrl}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`,
           {
             method: 'PUT',
             headers: {

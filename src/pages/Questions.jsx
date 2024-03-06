@@ -16,6 +16,9 @@ const Questions = () => {
         'Content-Type': 'multipart/form-data',
         'Authorization': userDetails.token };
 
+        //Environment variables
+    const apiUrl=process.env.REACT_APP_API_URL;
+
     const [questions, setQuestions] = useState([]);
     const [showAdd, setShowAdd] = useState(false);
     const [newQuestion, setNewQuestion] = useState({
@@ -54,7 +57,7 @@ const Questions = () => {
 
     const fetchQuestions = async () => {
         try {
-            const response = await axios.get(`https://localhost:7295/api/Question/QuizID/${quizid}`,{headers});
+            const response = await axios.get(`${apiUrl}/Question/QuizID/${quizid}`,{headers});
             const sortedData = response.data.slice().sort((a, b) => a.questionNo - b.questionNo);
             setQuestions(sortedData);
             console.log("QuestionData", response.data)
@@ -81,7 +84,7 @@ const Questions = () => {
             formData.append('imageName', "No Image");
         }
 
-        axios.post('https://localhost:7295/api/Question', formData,{headers})
+        axios.post(`${apiUrl}/Question`, formData,{headers})
             .then((result) => {
                 setShowAdd(false);
                 fetchQuestions();
@@ -112,7 +115,7 @@ const Questions = () => {
     const handleEditClick = async (question) => {
         if (question.imageName !== "No Image") {
             try {
-                const response = await axios.get(`https://localhost:7295/api/Question/Image/${question.quizID}/${question.questionNo}/${question.imageName}`, {
+                const response = await axios.get(`${apiUrl}/Question/Image/${question.quizID}/${question.questionNo}/${question.imageName}`, {
                     responseType: 'arraybuffer',headers
                 });
 
@@ -176,7 +179,7 @@ const Questions = () => {
             formData.append('imageName', "No Image");
         }
 
-        axios.put(`https://localhost:7295/api/Question/${editQuestionId}`, formData,{headers})
+        axios.put(`${apiUrl}/Question/${editQuestionId}`, formData,{headers})
             .then((result) => {
                 fetchQuestions();
                 clearEdit();
@@ -192,7 +195,7 @@ const Questions = () => {
 
     const handleDelete = (questionId) => {
         if (window.confirm('Are you sure you want to delete this question?')) {
-            axios.delete(`https://localhost:7295/api/Question/${questionId}`,{headers})
+            axios.delete(`${apiUrl}/Question/${questionId}`,{headers})
                 .then((result) => {
                     fetchQuestions();
                     toast.success('Question has been deleted');
@@ -275,7 +278,7 @@ const Questions = () => {
                                 <td>{question.correctOption}</td>
                                 <td>
                                     {question.imageName !== 'No Image' && (
-                                        <img src={`https://localhost:7295/api/Question/Image/${quizid}/${question.questionNo}/${question.imageName}`} alt="Question Image" style={{ maxWidth: '100px', maxHeight: '100px' }} />
+                                        <img src={`${apiUrl}/Question/Image/${quizid}/${question.questionNo}/${question.imageName}`} alt="Question Image" style={{ maxWidth: '100px', maxHeight: '100px' }} />
                                     )}
                                 </td>
 

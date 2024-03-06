@@ -73,13 +73,16 @@ const Users = () => {
     //for dropdown list
     const [rolelist, setRolelist] = useState([{}])
 
+    //Environment variables
+    const apiUrl=process.env.REACT_APP_API_URL;
+
     useEffect(() => {
         getData();
     }, []);
 
 
     const getData = () => {
-        axios.get('https://localhost:7295/api/User', { headers })
+        axios.get(`${apiUrl}/User`, { headers })
             .then((result) => {
                 setData(result.data)
                 setRolelist(result.data)
@@ -122,7 +125,7 @@ const Users = () => {
     const handleEdit = (id) => {
         //alert(id);
         handleShow();
-        axios.get(`https://localhost:7295/api/User/${id}`, { headers })
+        axios.get(`${apiUrl}/User/${id}`, { headers })
             .then((result) => {
                 setEditName(result.data.username);
                 setEditEmail(result.data.userEmail);
@@ -140,7 +143,7 @@ const Users = () => {
 
     const handleDelete = (id) => {
         if (window.confirm("Are you sure to delete this User") == true) {
-            axios.delete(`https://localhost:7295/api/User/${id}`, { headers })
+            axios.delete(`${apiUrl}/User/${id}`, { headers })
                 .then((result) => {
                     toast.success('User has been deleted');
                     getData();
@@ -195,7 +198,7 @@ const Users = () => {
         }
 
         if (formIsValid) {
-            const url = `https://localhost:7295/api/User/${editID}`;
+            const url = `${apiUrl}/User/${editID}`;
             const data = {
                 "userID": editID,
                 "username": editName,
@@ -221,14 +224,14 @@ const Users = () => {
 
     const handlesend = async (id) => {
         try {
-            const result = await axios.get(`https://localhost:7295/api/User/${id}`, { headers });
+            const result = await axios.get(`${apiUrl}/User/${id}`, { headers });
             console.log(result.data);
             // Set state variables
             setEName(result.data.username);
             setEPassword(result.data.password);
             setEEmail(result.data.userEmail);
             // Perform the second API call after setting state
-            const url = `https://localhost:7295/api/User/slgemail?recipientEmail=${result.data.userEmail}&username=${result.data.username}&password=${result.data.password}`;
+            const url = `${apiUrl}/User/slgemail?recipientEmail=${result.data.userEmail}&username=${result.data.username}&password=${result.data.password}`;
             console.log({ url });
             await axios.post(url, {}, { headers });
             toast.success('Email has been sent');
@@ -279,7 +282,7 @@ const Users = () => {
 
         if (formIsValid) {
             // Proceed with saving the user
-            const url = 'https://localhost:7295/api/User';
+            const url = `${apiUrl}/User`;
             const data = {
                 "userID": 0,
                 "username": name,

@@ -19,6 +19,9 @@ const StartQuiz = () => {
     const [userQuiz, setUserQuiz] = useState(null);
     const [selectedOption, setSelectedOption] = useState(null);
 
+    //Environment variables
+    const apiUrl=process.env.REACT_APP_API_URL;
+
     useEffect(() => {
         console.log("courseID", courseid);
         fetchQuiz();
@@ -26,9 +29,9 @@ const StartQuiz = () => {
 
     const fetchQuiz = async () => {
         try {
-            const response = await axios.get(`https://localhost:7295/api/Quiz/ByCourse/${courseid}`, { headers });
+            const response = await axios.get(`${apiUrl}/Quiz/ByCourse/${courseid}`, { headers });
             setCurrentQuiz(response.data);
-            const questionsResponse = await axios.get(`https://localhost:7295/api/Question/QuizID/${response.data.quizID}`, { headers });
+            const questionsResponse = await axios.get(`${apiUrl}/Question/QuizID/${response.data.quizID}`, { headers });
             setQuestions(questionsResponse.data);
             console.log("Questions", questionsResponse.data)
             createUserQuiz(response.data.quizID);
@@ -51,7 +54,7 @@ const StartQuiz = () => {
                 score: 0
             };
 
-            const response = await axios.post('https://localhost:7295/api/UserQuiz', userQuizData, { headers });
+            const response = await axios.post(`${apiUrl}/UserQuiz`, userQuizData, { headers });
             console.log('User quiz data', response.data);
 
             setUserQuiz(response.data);
@@ -66,7 +69,7 @@ const StartQuiz = () => {
 
     const UpdateUserQuiz = async () => {
         try {
-            const userAnswersResponse = await axios.get(`https://localhost:7295/api/UserAnswer/userQuizID/${userQuiz.userQuizID}`, { headers });
+            const userAnswersResponse = await axios.get(`${apiUrl}/UserAnswer/userQuizID/${userQuiz.userQuizID}`, { headers });
             const userAnswers = userAnswersResponse.data;
 
             const score = calculateScore(userAnswers);
@@ -82,7 +85,7 @@ const StartQuiz = () => {
                 score: score
             };
 
-            const response = await axios.put(`https://localhost:7295/api/UserQuiz/${userQuizData.userQuizID}`, userQuizData, { headers });
+            const response = await axios.put(`${apiUrl}/UserQuiz/${userQuizData.userQuizID}`, userQuizData, { headers });
             console.log('Updated User quiz data', response.data);
             window.alert(`You Scored: ${score}`);
             setUserQuiz(null);
@@ -114,7 +117,7 @@ const StartQuiz = () => {
             isCorrect: selectedOption === currentQuestion.correctOption
         };
         console.log("useranswerdata", userAnswerData)
-        const response = await axios.post('https://localhost:7295/api/UserAnswer', userAnswerData, { headers });
+        const response = await axios.post(`${apiUrl}/UserAnswer`, userAnswerData, { headers });
         console.log('User answer saved successfully:', response.data);
         setSelectedOption(null);
         UpdateUserQuiz();
@@ -137,7 +140,7 @@ const StartQuiz = () => {
                         isCorrect: selectedOption === currentQuestion.correctOption
                     };
                     console.log("useranswerdata", userAnswerData)
-                    const response = await axios.post('https://localhost:7295/api/UserAnswer', userAnswerData, { headers });
+                    const response = await axios.post(`${apiUrl}/UserAnswer`, userAnswerData, { headers });
                     console.log('User answer saved successfully:', response.data);
                     setSelectedOption(null);
                 } catch (error) {
@@ -175,12 +178,12 @@ const StartQuiz = () => {
             <div className="quiz-box">
                 <div className="question-container ">
                     {currentQuestion ? (
-                        <div>
-                            <p>Question {currentQuestion.questionNo}: {currentQuestion.questionText}</p>
+                        <div className="datacontainer">
+                            <p className="qstn">Question {currentQuestion.questionNo}: {currentQuestion.questionText}</p>
                             {currentQuestion.imageName !== "No Image" && currentQuestion.imageName ? (
                                 <div className="image-container">
                                     <img
-                                        src={`https://localhost:7295/api/Question/Image/${currentQuestion.quizID}/${currentQuestion.questionNo}/${currentQuestion.imageName}`}
+                                        src={`${apiUrl}/Question/Image/${currentQuestion.quizID}/${currentQuestion.questionNo}/${currentQuestion.imageName}`}
                                         alt="Question"
                                         style={{ maxWidth: "500px", maxHeight: "400px", width: "auto", height: "auto" }}
                                     />

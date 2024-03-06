@@ -55,13 +55,16 @@ const Quiz = () => {
     const [editCourseNameError, setEditCourseNameError] = useState('');
     const [editQuizTitleError, setEditQuizTitleError] = useState('');
 
+    //Environment variables
+    const apiUrl=process.env.REACT_APP_API_URL;
+
     useEffect(() => {
         getData();
         fetchCourseData();
     }, []);
 
     const getData = () => {
-        axios.get('https://localhost:7295/api/Quiz', { headerjsondata })
+        axios.get(`${apiUrl}/Quiz`, { headerjsondata })
             .then((result) => {
                 setData(result.data);
                 clear();
@@ -71,11 +74,9 @@ const Quiz = () => {
             });
     };
 
-    const fetchCourseData = () => {
-       
-        axios.get('https://localhost:7295/api/Course', { headers })
-            .then((result) => {
-                debugger;
+    const fetchCourseData = () => {       
+        axios.get(`${apiUrl}/Course`, { headers })
+            .then((result) => {                
                 setCourseData(result.data);
                 console.log("the value of coursename is :",result.data[0].courseName);
             })
@@ -85,7 +86,7 @@ const Quiz = () => {
     };
 
     const handleEdit = (id) => {
-        axios.get(`https://localhost:7295/api/Quiz/${id}`, { headerjsondata })
+        axios.get(`${apiUrl}/Quiz/${id}`, { headerjsondata })
             .then((result) => {
                 setEditID(id);
                 setEditTitle(result.data.title);
@@ -100,7 +101,7 @@ const Quiz = () => {
 
     const handleDelete = (id) => {
         if (window.confirm('Are you sure you want to delete this quiz?')) {
-            axios.delete(`https://localhost:7295/api/Quiz/${id}`, { headerjsondata })
+            axios.delete(`${apiUrl}/Quiz/${id}`, { headerjsondata })
                 .then((result) => {
                     toast.success('Quiz has been deleted');
                     getData();
@@ -131,7 +132,7 @@ const Quiz = () => {
         }
 
         if (formIsValid) {
-        const url = `https://localhost:7295/api/Quiz/${editID}`;
+        const url = `${apiUrl}/Quiz/${editID}`;
         const data = {
             "quizID": editID,
             "courseID": editCourseID,
@@ -171,7 +172,7 @@ const Quiz = () => {
         }
 
         if (formIsValid) {
-        const url = 'https://localhost:7295/api/Quiz';      
+        const url = `${apiUrl}/Quiz`;      
         const data = {
             "quizID": 0,
             "courseID": newCourseID,

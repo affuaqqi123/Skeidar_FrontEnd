@@ -38,13 +38,15 @@ const Groups = () => {
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
 
+    //Environment variables
+    const apiUrl=process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         getData();
     }, [])
 
     const getData = () => {
-        axios.get('https://localhost:7295/api/Group', { headers })
+        axios.get(`${apiUrl}/Group`, { headers })
             .then((result) => {
                 setData(result.data)
                 console.log(result.data)
@@ -56,7 +58,7 @@ const Groups = () => {
 
     const handleEdit = (id) => {
         handleShow();
-        axios.get(`https://localhost:7295/api/Group/${id}`, { headers })
+        axios.get(`${apiUrl}/Group/${id}`, { headers })
             .then((result) => {
                 setEditGroup(result.data.groupName);
                 setEditId(id);
@@ -68,7 +70,7 @@ const Groups = () => {
 
     const handleDelete = (id) => {
         if (window.confirm("Are you sure to delete this Group") == true) {
-            axios.delete(`https://localhost:7295/api/Group/${id}`, { headers })
+            axios.delete(`${apiUrl}/Group/${id}`, { headers })
                 .then((result) => {
                     toast.success('Group has been deleted');
                     getData();
@@ -89,7 +91,7 @@ const Groups = () => {
         }
 
         if (formIsValid) {
-            const url = `https://localhost:7295/api/Group/${editID}`;
+            const url = `${apiUrl}/Group/${editID}`;
             const data = {
                 "groupID": editID,
                 "groupName": editGroup
@@ -117,7 +119,7 @@ const Groups = () => {
         }
 
         if (formIsValid) {
-            const url = 'https://localhost:7295/api/Group';
+            const url = `${apiUrl}/Group`;
             const data = {
                 "groupname": group,
 
