@@ -360,7 +360,7 @@ const StartCoursePage = () => {
       <hr className='border border-danger h-1'></hr>
 
       {/* Description Section */}
-      <div className="description-section m-5 border border-secondary p-3 " dangerouslySetInnerHTML={{ __html: courseData[currentStep - 1]?.description }}></div>
+      <div className="description-section m-2 border border-secondary p-3 " dangerouslySetInnerHTML={{ __html: courseData[currentStep - 1]?.description }}></div>
 
       {/* Navigation Buttons */}
       <div className="navigation-buttons">

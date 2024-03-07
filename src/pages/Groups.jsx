@@ -4,6 +4,7 @@ import Table from 'react-bootstrap/Table';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Modal, Button, Form, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
+import './CoursesMain.css';
 
 const Groups = () => {
 
@@ -145,7 +146,7 @@ const Groups = () => {
         setGroupNameError('');
     }
     return (
-        <div className='d-flex flex-column justify-content-center align-items-center bg-light m-3'>
+        <div className='groupdiv d-flex flex-column align-items-center bg-light m-3'>
             <br></br>
             <h1>List of Groups</h1>
             <div className='w-75 rounded bg-white border shadow p-4'>

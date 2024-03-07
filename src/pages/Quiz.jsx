@@ -6,6 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useNavigate } from 'react-router-dom';
+import './CoursesMain.css';
 
 const Quiz = () => {
     
@@ -222,7 +223,7 @@ const Quiz = () => {
     };
 
     return (
-        <div className='d-flex flex-column justify-content-center align-items-center bg-light m-3'>
+        <div className='quizdiv d-flex flex-column align-items-center bg-light m-3'>
             <br />
             <h1>List of Quizzes</h1>
             <div className='w-75 rounded bg-white border shadow p-4'>
@@ -230,7 +231,7 @@ const Quiz = () => {
 
                 <button style={{ paddingLeft: '15px', width: '135px' }} className='btn btn-success' onClick={handleShowAdd}>Add</button>
 
-                <Table striped bordered hover size='sm' style={{ marginTop: '15px' }}>
+                <Table striped bordered hover size='sm' responsive="sm" style={{ marginTop: '15px' }}>
                     <thead>
                         <tr>
                             <th className='text-center'>#</th>

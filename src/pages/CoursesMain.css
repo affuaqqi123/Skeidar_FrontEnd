@@ -3,6 +3,9 @@
   padding: 0;
   box-sizing: border-box;
 }
+html {
+  height: 100%;
+}
 .container {
   display: flex;
   justify-content: space-between;
@@ -111,23 +114,95 @@
 }
 .maincntn{
   width: auto;
-
+  height: 100vh;  
+}
+.groupdiv{
+  width: auto;
+  height: 100vh;
+}
+.maindashboarddiv{
+  width: auto;
+  height: 100vh;
+}
+.userdiv{
+  width: auto;
+  height: 100vh;
+}
+.quizdiv{
+  width: auto;
+  height: 100vh;
+}
+.usergroupdiv{
+  width: auto;
+  height: 100vh;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 932px) and (max-height: 430px) {
   .maincntn{
     max-width: 100%;
-    margin: 0px !important;       
+    height: auto;
+    /* margin-top: 0px !important;  */
+    /* padding-bottom: 0px !important; */
+    /* height: auto !important;       */
   }
-  @page {
-    size: landscape; /* Set the page orientation to landscape */
+  .groupdiv,
+  .maindashboarddiv,
+  .userdiv,
+  .quizdiv,
+  .usergroupdiv{
+    height: auto;
   }
+}
+@media only screen and (max-width: 430px) {
+  .maincntn{
+    max-width: 100%;
+    /* height: auto; */
+    /* margin-top: 0px !important; */
+    /* padding-bottom: 250px !important;  */              
+  }
+  /* .groupdiv,
+  .maindashboarddiv,
+  .userdiv,
+  .quizdiv,
+  .usergroupdiv{
+    height: auto;
+  } */
+}
+@media only screen and (min-width: 431px) and (max-width: 600px) {
+  .maincntn{
+    max-width: 100%;
+    /* height: auto; */
+    /* margin-top: 0px !important; */
+    /* margin: 0px !important; 
+    padding-bottom: 250px !important;  */
+    /* height: auto !important;       */
+  }
+  /* .groupdiv,
+  .maindashboarddiv,
+  .userdiv,
+  .quizdiv,
+  .usergroupdiv{
+    height: auto;
+  } */
+  /* @page {
+    size: landscape; /* Set the page orientation to landscape 
+  } */
 }
 
 @media only screen and (min-width: 601px) and (max-width: 767px) {
   .maincntn{
-    max-width: 100%;     
+    max-width: 100%; 
+    /* height: auto; */
+    /* padding-bottom: 250px !important; */
+    /* height: auto !important;     */
   }
+  /* .groupdiv,
+  .maindashboarddiv,
+  .userdiv,
+  .quizdiv,
+  .usergroupdiv{
+    height: auto;
+  } */
   @page {
     size: landscape; /* Set the page orientation to landscape */
   }
@@ -136,17 +211,62 @@
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   .maincntn{
     max-width: 100%;
+    /* height: auto; */
+    /* padding-bottom: 20  0px !important; */
+    /* height: auto !important; */
   }
+  /* .groupdiv,
+  .maindashboarddiv,
+  .userdiv,
+  .quizdiv,
+  .usergroupdiv{
+    height: auto;
+  } */
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
   .maincntn{
     max-width: 100%;
+    /* height: auto; */
+    /* padding-bottom: 350px !important; */
+    /* height: auto !important; */
   }
+  /* .groupdiv,
+  .maindashboarddiv,
+  .userdiv,
+  .quizdiv,
+  .usergroupdiv{
+    height: auto;
+  } */
 }
 
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 1200px) and (max-width: 1500px) {
   .maincntn{
     max-width: 100%;
+    /* height: auto; */
+    /* padding-bottom: 400px !important; */
+    /* height: auto !important; */
   }
+  /* .groupdiv,
+  .maindashboarddiv,
+  .userdiv,
+  .quizdiv,
+  .usergroupdiv{
+    height: auto;
+  } */
+}
+@media only screen and (min-width: 1501px) and (max-width: 2100px) {
+  .maincntn{
+    max-width: 100%;
+    /* height: auto; */
+    /* padding-bottom: 450px !important; */
+    /* height: auto !important; */
+  }
+  /* .groupdiv,
+  .maindashboarddiv,
+  .userdiv,
+  .quizdiv,
+  .usergroupdiv{
+    height: auto;
+  } */
 }

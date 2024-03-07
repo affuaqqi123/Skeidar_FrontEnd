@@ -3,6 +3,17 @@
     padding: 0;
     box-sizing: border-box;
   }
+  html{
+    position: relative;
+    /* min-height: 100%; */
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
 
 .headerpage {
     position: relative;
@@ -42,12 +53,18 @@ ul li {
 }
 
 .footer {
+    /* position: absolute; */
     background: black;
     text-align: center;    
     align-items: center;
     color: #fff;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    /* bottom: 0; */
     /* min-width: 600px; */    
-    margin-top: auto;
+    /* margin-top: auto; */
 }
 
 .logout-button {
@@ -149,8 +166,8 @@ ul li {
 
     .navbar {
         padding: 20px;
-        /* width: 100%;
-        max-width: 767px; */
+         width: 100%;
+        /* max-width: 767px; */ 
        
     }
 
@@ -181,7 +198,7 @@ ul li {
 
     .navbar {
         padding: 20px;
-        /* width: 1000px; */
+        width: 100%;
        
     }
 
@@ -192,7 +209,7 @@ ul li {
         /* width: 1000px; */
     }
 }
-@media only screen and (min-width: 992px) and (max-width: 1199px) {
+ @media only screen and (min-width: 992px) and (max-width: 1199px) {
     .logo {
         max-width: 230px;
         height: auto;
@@ -207,11 +224,9 @@ ul li {
     ul li {
         font-size: 26px;
     }
-
     .navbar {
         padding: 20px;
-        /* width: 1200px; */
-      
+        width: 100%;       
     }
 
     .logout-button {
@@ -225,9 +240,9 @@ ul li {
     }
 }
 
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 1200px) and (max-width: 1500px) {
     .logo {
-        width: 530px;
+        width: 330px;
         height: auto;
         margin-left: 25px;
     }
@@ -243,7 +258,7 @@ ul li {
 
     .navbar {
         padding: 20px;
-        /* width: 1730px; */
+        width: 100%;
         
     }
 
@@ -257,3 +272,35 @@ ul li {
         /* width: 1730px; */
     }
 }
+ @media only screen and (min-width: 1501px) and (max-width: 2100px) {
+    .logo {
+        width: 330px;
+        height: auto;
+        margin-left: 25px;
+    }
+
+    .logout-button {
+        padding: 10px 12px;
+        font-size: 23px;
+    }
+
+    ul li {
+        font-size: 28px;
+    }
+
+    .navbar {
+        padding: 20px;
+        width: 100%;
+        
+    }
+
+    .logout-button {
+        margin-right: 15px;
+    }
+
+    .footer {
+        
+        font-size: 25px;
+        /* width: 1730px; */
+    }
+} 

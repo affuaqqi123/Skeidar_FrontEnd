@@ -390,7 +390,7 @@ const Courses = () => {
   
   
       return (
-          <div className='maincntn d-flex flex-column justify-content-center align-items-center bg-light m-3'>
+          <div className='maincntn d-flex flex-column align-items-center bg-light m-3'>
               <h1>{lngsltd["List of Courses"]}</h1>
               <div className='w-75 rounded bg-white border shadow p-4 align-items-center'>
                   <ToastContainer />

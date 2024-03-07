@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './CoursesMain.css';
 
 const UserGroups = () => {
 
@@ -187,7 +188,7 @@ const UserGroups = () => {
       };
   
       return (
-          <div className='d-flex flex-column justify-content-center align-items-center bg-light m-3'>
+          <div className='usergroupdiv d-flex flex-column align-items-center bg-light m-3'>
               <h1>List of UserGroups</h1>
               <div className='w-75 rounded bg-white border shadow p-4 align-items-center'>
                   <ToastContainer />

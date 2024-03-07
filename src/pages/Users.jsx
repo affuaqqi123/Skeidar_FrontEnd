@@ -8,6 +8,7 @@ import Row from 'react-bootstrap/Row';
 // import Container from 'react-bootstrap/Container';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './CoursesMain.css';
 
 const Users = () => {
 
@@ -333,7 +334,7 @@ const Users = () => {
     }
 
     return (
-        <div className='d-flex flex-column justify-content-center align-items-center bg-light m-3'>
+        <div className='userdiv d-flex flex-column align-items-center bg-light m-3'>    
             <br></br>
             <h1>List of Users</h1>
             <ToastContainer />

@@ -1,4 +1,5 @@
 import React from 'react';
+import './CoursesMain.css';
 
 const Dashboard = () => {
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
@@ -7,7 +8,7 @@ const Dashboard = () => {
         'Authorization': `Bearer ${userDetails.token}`
       }
     return (
-        <div className='m-3'>
+        <div className='maindashboarddiv m-3'>
             <h1>dashboard page</h1>
         </div>
     );
