@@ -10,7 +10,7 @@ import {
   faRightFromBracket,
   faPaperPlane
 } from '@fortawesome/free-solid-svg-icons';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -18,6 +18,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const StartCoursePage = () => {
 
   const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+  const lngsltd=JSON.parse(localStorage.getItem('languageSelected'));
   const headers = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${userDetails.token}`
@@ -36,13 +37,11 @@ const StartCoursePage = () => {
   //Environment variables
   const apiUrl=process.env.REACT_APP_API_URL;
 
-  const fetchCourseData = async () => {
-    console.log("Entered Fetch");
+  const fetchCourseData = async () => {    
     try {
       const response = await axios.get(`${apiUrl}/CourseStep/Course/${id}`, { headers });
       if (response) {
-        const sortedData = response.data.slice().sort((a, b) => a.stepNo - b.stepNo);
-        console.log("CourseData", sortedData);
+        const sortedData = response.data.slice().sort((a, b) => a.stepNo - b.stepNo);        
         let userCourseStepsResponse = await axios.get(`${apiUrl}/UserCourseStep/ByCourseAndUser/${id}/${userID}`, { headers });
         let userSteps = userCourseStepsResponse.data;
         if (userSteps.length === 0) {
@@ -54,10 +53,7 @@ const StartCoursePage = () => {
             status: "InComplete",
           }));
           createuserCourseStep(userSteps);
-        }
-
-        console.log("userCourseStep", userCourseSteps);
-        console.log("userStep", userSteps);
+        }                
 
         const firstIncompleteStep = userSteps.find(step => step.status !== 'Completed');
 
@@ -118,25 +114,21 @@ const StartCoursePage = () => {
     }
   }
 
-  useEffect(() => {
-    console.log('Effect triggered with id:', id);
+  useEffect(() => {    
     fetchCourseData();
   }, [id]);
 
-  useEffect(() => {
-    console.log('Effect 2 triggered');
+  useEffect(() => {    
     if (courseData.length > 0) {
       updateVideoUrl();
       updateImageUrl();
     }
   }, [currentStep]);
 
-  const updateVideoUrl = async () => {
-    console.log("called");
+  const updateVideoUrl = async () => {    
 
     if (courseData[currentStep - 1]?.contentType === 'Video') {
-      try {
-        console.log("try");
+      try {        
         setVideoUrl('');
         const response = await axios.get(
           `${apiUrl}/CourseStep/filecontent?CourseID=${courseData[currentStep - 1].courseID}&StepNo=${courseData[currentStep - 1].stepNo}&ContentType=${courseData[currentStep - 1].contentType}&FileName=${courseData[currentStep - 1].stepContent}`,
@@ -149,7 +141,7 @@ const StartCoursePage = () => {
 
 
       } catch (error) {
-        console.log("catch");
+        
         console.error('Error fetching video data:', error);
         setVideoUrl('');
       }
@@ -158,11 +150,11 @@ const StartCoursePage = () => {
     }
   };
   const updateImageUrl = async () => {
-    console.log("called");
+    
 
     if (courseData[currentStep - 1]?.contentType === 'Image') {
       try {
-        console.log("try");
+        
         setImageUrls('');
         const fileNames = courseData[currentStep - 1].stepContent.split(',');
         const responses = await Promise.all(
@@ -183,7 +175,7 @@ const StartCoursePage = () => {
 
 
       } catch (error) {
-        console.log("catch");
+        
         console.error('Error fetching Image data:', error);
         setImageUrls('');
       }
@@ -197,8 +189,7 @@ const StartCoursePage = () => {
       try {
         let status = 'InComplete';
         const courseId = courseData[currentStep - 1].courseID;
-        const stepNo = courseData[currentStep - 1].stepNo;
-        console.log(status, courseId, stepNo);
+        const stepNo = courseData[currentStep - 1].stepNo;        
         await axios.put(
           `${apiUrl}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`, { headers }
         );
@@ -212,7 +203,7 @@ const StartCoursePage = () => {
 
   const handleNext = async () => {
     if (courseData[currentStep - 1]?.contentType === 'Video' && !videoWatched) {
-      window.alert("Please complete the video before proceeding to the next step");
+      toast.info(lngsltd["Please complete the video before proceeding to the next step"]);
     } else {
       try {
         let status = "Completed";
@@ -228,7 +219,7 @@ const StartCoursePage = () => {
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(lngsltd['Network response was not ok']);
         }
 
         setCurrentStep((prevStep) => Math.min(prevStep + 1, courseData.length));
@@ -256,7 +247,7 @@ const StartCoursePage = () => {
 
   const handleSubmission = async () => {
     if (courseData[currentStep - 1]?.contentType === 'Video' && !videoWatched) {
-      window.alert("Please complete the video before submitting");
+      toast.info(lngsltd["Please complete the video before submitting"]);
     } else {
       try {
         let status = "Completed";
@@ -273,12 +264,12 @@ const StartCoursePage = () => {
           }
         );
         if (response.ok) {
-          toast.success('Course submitted successfully!', {
+          toast.success(lngsltd['Course submitted successfully!'], {
             position: toast.POSITION.TOP_CENTER,
           });
           navigate('/courses');
         } else {
-          throw new Error('Failed to submit course');
+          throw new Error(lngsltd['Failed to submit course']);
         }
       } catch (error) {
         console.error('Error updating status and video time:', error);
@@ -296,7 +287,14 @@ const StartCoursePage = () => {
 
 
   return (
-    <div className='m-3'>
+    <div className='startcoursepagediv m-3'>
+      <ToastContainer 
+                   position="top-center" // Position at the bottom right corner
+                   autoClose={5000} // Close after 5 seconds
+                   // hideProgressBar={false} // Show progress bar
+                   newestOnTop={false} // Display newer notifications below older ones
+                   closeOnClick // Close the notification when clicked
+                  />
       {/* Stepper */}
       <div className="stepper-container mb-5 border border-secondary p-3 rounded">
         {courseData.map((courseStep, index) => (
@@ -344,12 +342,12 @@ const StartCoursePage = () => {
                       onEnded={() => setVideoWatched(true)}
                     >
                       <source src={videoUrl} type="video/mp4" />
-                      Your browser does not support the video tag.
+                      {lngsltd["Your browser does not support the video tag"]} 
                     </video>
 
                   </>
                 ) : (
-                  <p>No video available for this step.</p>
+                  <p>Loading...Please wait</p>
                 )}
               </div>
             )}
@@ -365,14 +363,14 @@ const StartCoursePage = () => {
       {/* Navigation Buttons */}
       <div className="navigation-buttons">
         <button className="btn btn-danger" onClick={handleExit}>
-          <FontAwesomeIcon className='iconstyle' icon={faRightFromBracket} />Exit
+          <FontAwesomeIcon className='iconstyle' icon={faRightFromBracket} />{lngsltd["Exit"]}
         </button>
         <div style={{ float: "right" }}>
           <button className="btn btn-info" onClick={handlePrevious} disabled={currentStep === 1}>
-            <FontAwesomeIcon className='iconstyle' icon={faLeftLong} /> Previous
+            <FontAwesomeIcon className='iconstyle' icon={faLeftLong} /> {lngsltd["Previous"]}
           </button>
           <button className="btn btn-info" onClick={handleNext} hidden={currentStep === courseData.length}>
-            <FontAwesomeIcon className='iconstyle' icon={faRightLong} /> Next
+            <FontAwesomeIcon className='iconstyle' icon={faRightLong} /> {lngsltd["Next"]}
           </button>
           <button className="btn btn-outline-success border " hidden={currentStep < courseData.length} onClick={handleSubmission}>
             Submit <FontAwesomeIcon className='iconstyle px-1' icon={faPaperPlane} />

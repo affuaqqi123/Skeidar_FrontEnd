@@ -7,17 +7,20 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';
 import './Questions.css'
+import './CoursesMain.css';
 
 const Questions = () => {
     const { quizid } = useParams();
 
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
-    const headers = { 
+    const lngsltd = JSON.parse(localStorage.getItem('languageSelected'));
+    const headers = {
         'Content-Type': 'multipart/form-data',
-        'Authorization': userDetails.token };
+        'Authorization': userDetails.token
+    };
 
-        //Environment variables
-    const apiUrl=process.env.REACT_APP_API_URL;
+    //Environment variables
+    const apiUrl = process.env.REACT_APP_API_URL;
 
     const [questions, setQuestions] = useState([]);
     const [showAdd, setShowAdd] = useState(false);
@@ -51,49 +54,102 @@ const Questions = () => {
     });
     const [editQuestionId, setEditQuestionId] = useState(null);
 
+    //Validation Variable
+    const [questionTextError, setQuestionTextError] = useState('');
+    const [option1Error, setOption1Error] = useState('');
+    const [option2Error, setOption2Error] = useState('');
+    const [option3Error, setOption3Error] = useState('');
+    const [option4Error, setOption4Error] = useState('');
+    const [correctOptionError, setCorrectOptionError] = useState('');
+    const [editQuestionTextError, setEditQuestionTextError] = useState('');
+    const [editOption1Error, setEditOption1Error] = useState('');
+    const [editOption2Error, setEditOption2Error] = useState('');
+    const [editOption3Error, setEditOption3Error] = useState('');
+    const [editOption4Error, setEditOption4Error] = useState('');
+    const [editCorrectOptionError, setEditCorrectOptionError] = useState('');
+
     useEffect(() => {
         fetchQuestions();
     }, [quizid]);
 
     const fetchQuestions = async () => {
         try {
-            const response = await axios.get(`${apiUrl}/Question/QuizID/${quizid}`,{headers});
+            const response = await axios.get(`${apiUrl}/Question/QuizID/${quizid}`, { headers });
             const sortedData = response.data.slice().sort((a, b) => a.questionNo - b.questionNo);
             setQuestions(sortedData);
-            console.log("QuestionData", response.data)
         } catch (error) {
             console.error('Error fetching questions: ', error)
         }
     };
 
     const handleAdd = () => {
-        const formData = new FormData();
-        formData.append('quizID', newQuestion.quizID);
-        formData.append('questionText', newQuestion.questionText);
-        formData.append('questionNo', newQuestion.questionNo);
-        formData.append('option1', newQuestion.option1);
-        formData.append('option2', newQuestion.option2);
-        formData.append('option3', newQuestion.option3);
-        formData.append('option4', newQuestion.option4);
-        formData.append('correctOption', newQuestion.correctOption);
-
-        if (newQuestion.imageFile) {
-            formData.append('imageFile', newQuestion.imageFile);
-            formData.append('imageName', "Image");
+        clearErrors();
+        let formIsValid = true;
+        if (!newQuestion.questionText) {
+            setQuestionTextError('Question Text is required');
+            formIsValid = false;
         } else {
-            formData.append('imageName', "No Image");
+            setQuestionTextError('');
         }
+        if (!newQuestion.option1) {
+            setOption1Error('Option1 is required');
+            formIsValid = false;
+        } else {
+            setOption1Error('');
+        }
+        if (!newQuestion.option2) {
+            setOption2Error('Option2 is required');
+            formIsValid = false;
+        } else {
+            setOption2Error('');
+        }
+        if (!newQuestion.option3) {
+            setOption3Error('Option3 is required');
+            formIsValid = false;
+        } else {
+            setOption3Error('');
+        }
+        if (!newQuestion.option4) {
+            setOption4Error('Option4 is required');
+            formIsValid = false;
+        } else {
+            setOption4Error('');
+        }
+        if (!newQuestion.correctOption) {
+            setCorrectOptionError('Correct Option is required');
+            formIsValid = false;
+        } else {
+            setCorrectOptionError('');
+        }
+        if (formIsValid) {
+            const formData = new FormData();
+            formData.append('quizID', newQuestion.quizID);
+            formData.append('questionText', newQuestion.questionText);
+            formData.append('questionNo', newQuestion.questionNo);
+            formData.append('option1', newQuestion.option1);
+            formData.append('option2', newQuestion.option2);
+            formData.append('option3', newQuestion.option3);
+            formData.append('option4', newQuestion.option4);
+            formData.append('correctOption', newQuestion.correctOption);
 
-        axios.post(`${apiUrl}/Question`, formData,{headers})
-            .then((result) => {
-                setShowAdd(false);
-                fetchQuestions();
-                clear();
-                toast.success('New question has been added');
-            })
-            .catch((error) => {
-                toast.error(error);
-            });
+            if (newQuestion.imageFile) {
+                formData.append('imageFile', newQuestion.imageFile);
+                formData.append('imageName', "Image");
+            } else {
+                formData.append('imageName', "No Image");
+            }
+
+            axios.post(`${apiUrl}/Question`, formData, { headers })
+                .then((result) => {
+                    setShowAdd(false);
+                    fetchQuestions();
+                    clear();
+                    toast.success(lngsltd['New question has been added']);
+                })
+                .catch((error) => {
+                    toast.error(error);
+                });
+        }
     };
 
     const handleInputChange = (e) => {
@@ -105,24 +161,27 @@ const Questions = () => {
     };
 
     const handleEditInputChange = (e) => {
+
         const { name, value } = e.target;
         setEditQuestion(prevState => ({
             ...prevState,
             [name]: value
         }));
+
     };
 
     const handleEditClick = async (question) => {
+
+
         if (question.imageName !== "No Image") {
             try {
                 const response = await axios.get(`${apiUrl}/Question/Image/${question.quizID}/${question.questionNo}/${question.imageName}`, {
-                    responseType: 'arraybuffer',headers
+                    responseType: 'arraybuffer', headers
                 });
 
                 const blob = new Blob([response.data], { type: 'image/jpeg' });
                 const imageFile = new File([blob], question.imageName, { type: 'image/jpeg' });
 
-                console.log(imageFile);
                 setEditQuestion({
                     id: question.id,
                     quizID: question.quizID,
@@ -157,51 +216,92 @@ const Questions = () => {
         }
         setEditQuestionId(question.id);
         setShowEdit(true);
+
     };
 
     const handleEdit = () => {
-        const formData = new FormData();
-        formData.append('id', editQuestion.id);
-        formData.append('quizID', editQuestion.quizID);
-        formData.append('questionText', editQuestion.questionText);
-        formData.append('questionNo', editQuestion.questionNo);
-        formData.append('option1', editQuestion.option1);
-        formData.append('option2', editQuestion.option2);
-        formData.append('option3', editQuestion.option3);
-        formData.append('option4', editQuestion.option4);
-        formData.append('correctOption', editQuestion.correctOption);
-
-        if (editQuestion.imageFile) {
-            formData.append('imageFile', editQuestion.imageFile);
-            formData.append('imageName', "Image");
+        clearErrors();
+        let formIsValid = true;
+        if (!editQuestion.questionText) {
+            setEditQuestionTextError('Question Text is required');
+            formIsValid = false;
         } else {
-
-            formData.append('imageName', "No Image");
+            setEditQuestionTextError('');
         }
+        if (!editQuestion.option1) {
+            setEditOption1Error('Option1 is required');
+            formIsValid = false;
+        } else {
+            setEditOption1Error('');
+        }
+        if (!editQuestion.option2) {
+            setEditOption2Error('Option2 is required');
+            formIsValid = false;
+        } else {
+            setEditOption2Error('');
+        }
+        if (!editQuestion.option3) {
+            setEditOption3Error('Option3 is required');
+            formIsValid = false;
+        } else {
+            setEditOption3Error('');
+        }
+        if (!editQuestion.option4) {
+            setEditOption4Error('Option4 is required');
+            formIsValid = false;
+        } else {
+            setEditOption4Error('');
+        }
+        if (!editQuestion.correctOption) {
+            setEditCorrectOptionError('Correct Option is required');
+            formIsValid = false;
+        } else {
+            setEditCorrectOptionError('');
+        }
+        if (formIsValid) {
+            const formData = new FormData();
+            formData.append('id', editQuestion.id);
+            formData.append('quizID', editQuestion.quizID);
+            formData.append('questionText', editQuestion.questionText);
+            formData.append('questionNo', editQuestion.questionNo);
+            formData.append('option1', editQuestion.option1);
+            formData.append('option2', editQuestion.option2);
+            formData.append('option3', editQuestion.option3);
+            formData.append('option4', editQuestion.option4);
+            formData.append('correctOption', editQuestion.correctOption);
 
-        axios.put(`${apiUrl}/Question/${editQuestionId}`, formData,{headers})
-            .then((result) => {
-                fetchQuestions();
-                clearEdit();
-                setShowEdit(false);
-                toast.success('Question has been updated');
-            })
-            .catch((error) => {
-                toast.error('Failed to update question');
-                console.error('Error updating question: ', error);
-            });
+            if (editQuestion.imageFile) {
+                formData.append('imageFile', editQuestion.imageFile);
+                formData.append('imageName', "Image");
+            } else {
+
+                formData.append('imageName', "No Image");
+            }
+
+            axios.put(`${apiUrl}/Question/${editQuestionId}`, formData, { headers })
+                .then((result) => {
+                    fetchQuestions();
+                    clearEdit();
+                    setShowEdit(false);
+                    toast.success(lngsltd['Question has been updated']);
+                })
+                .catch((error) => {
+                    toast.error(lngsltd['Failed to update question']);
+                    console.error('Error updating question: ', error);
+                });
+        }
     };
 
 
     const handleDelete = (questionId) => {
-        if (window.confirm('Are you sure you want to delete this question?')) {
-            axios.delete(`${apiUrl}/Question/${questionId}`,{headers})
+        if (window.confirm(lngsltd['Are you sure you want to delete this question?'])) {
+            axios.delete(`${apiUrl}/Question/${questionId}`, { headers })
                 .then((result) => {
                     fetchQuestions();
-                    toast.success('Question has been deleted');
+                    toast.success(lngsltd['Question has been deleted']);
                 })
                 .catch((error) => {
-                    toast.error('Failed to delete question');
+                    toast.error(lngsltd['Failed to delete question']);
                     console.error('Error deleting question: ', error);
                 });
         }
@@ -239,6 +339,22 @@ const Questions = () => {
         });
     };
 
+    const clearErrors = () => {
+        setQuestionTextError('');
+        setOption1Error('');
+        setOption2Error('');
+        setOption3Error('');
+        setOption4Error('');
+        setCorrectOptionError('');
+        setEditQuestionTextError('');
+        setEditOption1Error('');
+        setEditOption2Error('');
+        setEditOption3Error('');
+        setEditOption4Error('');
+        setEditCorrectOptionError('');
+
+    };
+
     const handleRemoveImage = () => {
         setNewQuestion(prevState => ({
             ...prevState,
@@ -251,22 +367,24 @@ const Questions = () => {
             imageName: "No Image"
         }));
     };
-    
+
     return (
-        <div className='questions-container'>
-            <h1 className='questions-heading'>List of Questions</h1>
-            <div className='questions-table-container'>
-                <ToastContainer />
-                <Button className='add-button' onClick={() => setShowAdd(true)}>Add Question</Button>
-                <Table className='questions-table' striped bordered hover size='sm'>
-                    <thead>
+        <div className='questions-container d-flex flex-column w-100 align-items-center bg-light m-1'>
+            <ToastContainer />
+            <h1>{lngsltd["List of Questions"]}</h1>
+            <div className='w-100 rounded bg-white border shadow p-4 align-items-center'>
+                <div className='w-100 rounded bg-white border-bottom p-8 mt-0'>
+                    <Button className='btn btn-success' onClick={() => setShowAdd(true)}>{lngsltd["Add Question"]}</Button>
+                </div>
+                <Table className='text-center' striped bordered hover responsive='sm'>
+                    <thead className='thead-dark'>
                         <tr>
-                            <th>QuestionNo</th>
-                            <th>Question Text</th>
-                            <th>Options</th>
-                            <th>Correct Option</th>
-                            <th>Image</th>
-                            <th>Actions</th>
+                            <th>{lngsltd["QuestionNo"]}</th>
+                            <th>{lngsltd["Question Text"]}</th>
+                            <th>{lngsltd["Options"]}</th>
+                            <th>{lngsltd["Correct Option"]}</th>
+                            <th>{lngsltd["Image"]}</th>
+                            <th>{lngsltd["Actions"]}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -283,135 +401,148 @@ const Questions = () => {
                                 </td>
 
                                 <td>
-                                    <Button variant="info" onClick={() => handleEditClick(question)}>Edit</Button>{' '}
-                                    <Button variant="danger" onClick={() => handleDelete(question.id)}>Delete</Button>
+                                    <Button variant="primary" onClick={() => handleEditClick(question)}>{lngsltd["Edit"]}</Button>
+                                    <Button variant="danger" onClick={() => handleDelete(question.id)}>{lngsltd["Delete"]}</Button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </Table>
-                <Modal show={showAdd} onHide={() => setShowAdd(false)}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Add New Question</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <div className="form-group mb-3">
-                            <label htmlFor="questionNo">Question Number:</label>
-                            <input type="text" className="form-control" placeholder="Enter Question No" name="questionNo" value={newQuestion.questionNo} onChange={handleInputChange} />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="questionText">Question Text:</label>
-                            <input type="text" className="form-control" placeholder="Enter Question Text" name="questionText" value={newQuestion.questionText} onChange={handleInputChange} />
-                        </div>
-
-                        {newQuestion.imageFile && (
-                            <div className="form-group mb-3">
-                                <label>Selected Image Preview:</label><br />
-                                <img src={URL.createObjectURL(newQuestion.imageFile)} alt="Selected Image Preview" style={{ maxWidth: '100px', maxHeight: '100px' }} />
-                                <button className="btn btn-danger" onClick={() => handleRemoveImage()}>Remove Image</button>
-                            </div>
-                        )}
-                        <div className="form-group mb-3">
-                            <label htmlFor="imageFile">Image File:</label>
-                            <input type="file" className="form-control-file" name="imageFile" onChange={(e) => setNewQuestion({ ...newQuestion, imageFile: e.target.files[0] })} />
-                        </div>
-
-                        <div className="form-group mb-3">
-                            <label htmlFor="option1">Option 1:</label>
-                            <input type="text" className="form-control" placeholder="Enter Option 1" name="option1" value={newQuestion.option1} onChange={handleInputChange} />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="option2">Option 2:</label>
-                            <input type="text" className="form-control" placeholder="Enter Option 2" name="option2" value={newQuestion.option2} onChange={handleInputChange} />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="option3">Option 3:</label>
-                            <input type="text" className="form-control" placeholder="Enter Option 3" name="option3" value={newQuestion.option3} onChange={handleInputChange} />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="option4">Option 4:</label>
-                            <input type="text" className="form-control" placeholder="Enter Option 4" name="option4" value={newQuestion.option4} onChange={handleInputChange} />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="correctOption">Correct Option:</label>
-                            <select id="correctOption" className="form-control" name="correctOption" value={newQuestion.correctOption} onChange={handleInputChange}>
-                                <option value="" disabled hidden>Select Correct Option</option>
-                                <option value="1">Option 1</option>
-                                <option value="2">Option 2</option>
-                                <option value="3">Option 3</option>
-                                <option value="4">Option 4</option>
-                            </select>
-                        </div>
-
-                    </Modal.Body>
-
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setShowAdd(false)}>Cancel</Button>
-                        <Button variant="primary" onClick={handleAdd}>Add Question</Button>
-                    </Modal.Footer>
-                </Modal>
-                <Modal show={showEdit} onHide={() => setShowEdit(false)}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Edit Question</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <div className="form-group mb-3">
-                            <label htmlFor="questionNo">Question Number:</label>
-                            <input type="text" className="form-control" placeholder="Enter Question No" name="questionNo" value={editQuestion.questionNo} onChange={handleEditInputChange} />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="questionText">Question Text:</label>
-                            <input type="text" className="form-control" placeholder="Enter Question Text" name="questionText" value={editQuestion.questionText} onChange={handleEditInputChange} />
-                        </div>
-
-                        {editQuestion.imageFile && (
-                            <div className="form-group mb-3">
-                                <label>Selected Image Preview:</label><br />
-                                <img src={URL.createObjectURL(editQuestion.imageFile)} alt="Selected Image Preview" style={{ maxWidth: '100px', maxHeight: '100px' }} />
-                                <button className="btn btn-danger" onClick={() => handleRemoveImage()}>Remove Image</button>
-                            </div>
-                        )}
-
-                        <div className="form-group mb-3">
-                            <label htmlFor="imageFile">Image File:</label>
-                            <input type="file" className="form-control-file" name="imageFile" onChange={(e) => setEditQuestion({ ...editQuestion, imageFile: e.target.files[0] })} />
-                        </div>
-
-                        <div className="form-group mb-3">
-                            <label htmlFor="option1">Option 1:</label>
-                            <input type="text" className="form-control" placeholder="Enter Option 1" name="option1" value={editQuestion.option1} onChange={handleEditInputChange} />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="option2">Option 2:</label>
-                            <input type="text" className="form-control" placeholder="Enter Option 2" name="option2" value={editQuestion.option2} onChange={handleEditInputChange} />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="option3">Option 3:</label>
-                            <input type="text" className="form-control" placeholder="Enter Option 3" name="option3" value={editQuestion.option3} onChange={handleEditInputChange} />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="option4">Option 4:</label>
-                            <input type="text" className="form-control" placeholder="Enter Option 4" name="option4" value={editQuestion.option4} onChange={handleEditInputChange} />
-                        </div>
-                        <div className="form-group mb-3">
-                            <label htmlFor="correctOption">Correct Option:</label>
-                            <select id="correctOption" className="form-control" name="correctOption" value={editQuestion.correctOption} onChange={handleEditInputChange}>
-                                <option value="" disabled hidden>Select Correct Option</option>
-                                <option value="1">Option 1</option>
-                                <option value="2">Option 2</option>
-                                <option value="3">Option 3</option>
-                                <option value="4">Option 4</option>
-                            </select>
-                        </div>
-                    </Modal.Body>
-
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setShowEdit(false)}>Cancel</Button>
-                        <Button variant="primary" onClick={handleEdit}>Save Changes</Button>
-                    </Modal.Footer>
-                </Modal>
-
             </div>
+            <Modal show={showAdd} onHide={() => setShowAdd(false)}>
+                <Modal.Header closeButton style={{ backgroundColor: '#efedf0' }}>
+                    <Modal.Title>{lngsltd["Add Question"]}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="form-group mb-3">
+                        <label htmlFor="questionNo">{lngsltd["Question Number"]}:</label>
+                        <input type="text" className="form-control" placeholder="Enter Question No" name="questionNo" value={newQuestion.questionNo} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="questionText">{lngsltd["Question Text"]}:<span style={{ color: 'red' }}>*</span></label>
+                        <input type="text" className="form-control" placeholder="Enter Question Text" name="questionText" value={newQuestion.questionText} onChange={handleInputChange} />
+                        {questionTextError && <p className="text-danger">{questionTextError}</p>}
+                    </div>
+
+                    {newQuestion.imageFile && (
+                        <div className="form-group mb-3">
+                            <label>{lngsltd["Selected Image Preview"]}:</label><br />
+                            <img src={URL.createObjectURL(newQuestion.imageFile)} alt="Selected Image Preview" style={{ maxWidth: '100px', maxHeight: '100px' }} />
+                            <button className="btn btn-danger" onClick={() => handleRemoveImage()}>{lngsltd["Remove Image"]}</button>
+                        </div>
+                    )}
+                    <div className="form-group mb-3">
+                        <label htmlFor="imageFile">{lngsltd["Image File"]}:</label>
+                        <input type="file" className="form-control-file" name="imageFile" onChange={(e) => setNewQuestion({ ...newQuestion, imageFile: e.target.files[0] })} />
+                    </div>
+
+                    <div className="form-group mb-3">
+                        <label htmlFor="option1">{lngsltd["Option 1"]}:<span style={{ color: 'red' }}>*</span></label>
+                        <input type="text" className="form-control" placeholder="Enter Option 1" name="option1" value={newQuestion.option1} onChange={handleInputChange} />
+                        {option1Error && <p className="text-danger">{option1Error}</p>}
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="option2">{lngsltd["Option 2"]}:<span style={{ color: 'red' }}>*</span></label>
+                        <input type="text" className="form-control" placeholder="Enter Option 2" name="option2" value={newQuestion.option2} onChange={handleInputChange} />
+                        {option2Error && <p className="text-danger">{option2Error}</p>}
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="option3">{lngsltd["Option 3"]}:<span style={{ color: 'red' }}>*</span></label>
+                        <input type="text" className="form-control" placeholder="Enter Option 3" name="option3" value={newQuestion.option3} onChange={handleInputChange} />
+                        {option3Error && <p className="text-danger">{option3Error}</p>}
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="option4">{lngsltd["Option 4"]}:<span style={{ color: 'red' }}>*</span></label>
+                        <input type="text" className="form-control" placeholder="Enter Option 4" name="option4" value={newQuestion.option4} onChange={handleInputChange} />
+                        {option4Error && <p className="text-danger">{option4Error}</p>}
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="correctOption">{lngsltd["Correct Option"]}:<span style={{ color: 'red' }}>*</span></label>
+                        <select id="correctOption" className="form-control" name="correctOption" value={newQuestion.correctOption} onChange={handleInputChange}>
+                            <option value="" disabled>{lngsltd["Select Correct Option"]}</option>
+                            <option value="1">{lngsltd["Option 1"]}</option>
+                            <option value="2">{lngsltd["Option 2"]}</option>
+                            <option value="3">{lngsltd["Option 3"]}</option>
+                            <option value="4">{lngsltd["Option 4"]}</option>
+                        </select>
+                        {correctOptionError && <p className="text-danger">{correctOptionError}</p>}
+                    </div>
+
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleAdd}>{lngsltd["Add"]}</Button>
+                    <Button variant="secondary" onClick={() => setShowAdd(false)}>{lngsltd["Cancel"]}</Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showEdit} onHide={() => setShowEdit(false)}>
+                <Modal.Header closeButton style={{ backgroundColor: '#efedf0' }}>
+                    <Modal.Title>{lngsltd["Edit Question"]}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="form-group mb-3">
+                        <label htmlFor="questionNo">{lngsltd["Question Number"]}:</label>
+                        <input type="text" className="form-control" placeholder="Enter Question No" name="questionNo" value={editQuestion.questionNo} onChange={handleEditInputChange} />
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="questionText">{lngsltd["Question Text"]}:<span style={{ color: 'red' }}>*</span></label>
+                        <input type="text" className="form-control" placeholder="Enter Question Text" name="questionText" value={editQuestion.questionText} onChange={handleEditInputChange} />
+                        <div className="text-danger">{editQuestionTextError}</div>
+                    </div>
+
+                    {editQuestion.imageFile && (
+                        <div className="form-group mb-3">
+                            <label>{lngsltd["Selected Image Preview"]}:</label><br />
+                            <img src={URL.createObjectURL(editQuestion.imageFile)} alt="Selected Image Preview" style={{ maxWidth: '100px', maxHeight: '100px' }} />
+                            <button className="btn btn-danger" onClick={() => handleRemoveImage()}>{lngsltd["Remove Image"]}</button>
+                        </div>
+                    )}
+
+                    <div className="form-group mb-3">
+                        <label htmlFor="imageFile">{lngsltd["Image File"]}:</label>
+                        <input type="file" className="form-control-file" name="imageFile" onChange={(e) => setEditQuestion({ ...editQuestion, imageFile: e.target.files[0] })} />
+                    </div>
+
+                    <div className="form-group mb-3">
+                        <label htmlFor="option1">{lngsltd["Option 1"]}:<span style={{ color: 'red' }}>*</span></label>
+                        <input type="text" className="form-control" placeholder="Enter Option 1" name="option1" value={editQuestion.option1} onChange={handleEditInputChange} />
+                        <div className="text-danger">{editOption1Error}</div>
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="option2">{lngsltd["Option 2"]}:<span style={{ color: 'red' }}>*</span></label>
+                        <input type="text" className="form-control" placeholder="Enter Option 2" name="option2" value={editQuestion.option2} onChange={handleEditInputChange} />
+                        <div className="text-danger">{editOption2Error}</div>
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="option3">{lngsltd["Option 3"]}:<span style={{ color: 'red' }}>*</span></label>
+                        <input type="text" className="form-control" placeholder="Enter Option 3" name="option3" value={editQuestion.option3} onChange={handleEditInputChange} />
+                        <div className="text-danger">{editOption3Error}</div>
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="option4">{lngsltd["Option 4"]}:<span style={{ color: 'red' }}>*</span></label>
+                        <input type="text" className="form-control" placeholder="Enter Option 4" name="option4" value={editQuestion.option4} onChange={handleEditInputChange} />
+                        <div className="text-danger">{editOption4Error}</div>
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="correctOption">{lngsltd["Correct Option"]}:<span style={{ color: 'red' }}>*</span></label>
+                        <select id="correctOption" className="form-control" name="correctOption" value={editQuestion.correctOption} onChange={handleEditInputChange}>
+                            <option value="" disabled hidden>{lngsltd["Select Correct Option"]}</option>
+                            <option value="1">{lngsltd["Option 1"]}</option>
+                            <option value="2">{lngsltd["Option 2"]}</option>
+                            <option value="3">{lngsltd["Option 3"]}</option>
+                            <option value="4">{lngsltd["Option 4"]}</option>
+                        </select>
+                        <div className="text-danger">{editCorrectOptionError}</div>
+                    </div>
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleEdit}>{lngsltd["Save"]}</Button>
+                    <Button variant="secondary" onClick={() => setShowEdit(false)}>{lngsltd["Cancel"]}</Button>
+                </Modal.Footer>
+            </Modal>
+
+
         </div>
 
     );

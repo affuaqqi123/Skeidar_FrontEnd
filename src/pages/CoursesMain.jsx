@@ -19,8 +19,9 @@ import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 const CoursesMain = () => {
 
   const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+  const lngsltd=JSON.parse(localStorage.getItem('languageSelected'));
   const  headers= {
-    'Content-Type': 'application/json',
+    'Content-Type': 'multipart/form-data',
     'Authorization': `Bearer ${userDetails.token}`
   }
 
@@ -163,18 +164,17 @@ const CoursesMain = () => {
     } catch (error) {
       console.error('Error fetching file content: ', error);
       //toast.error('Error fetching file content');
-      toast.error('No Data');
+      toast.error (lngsltd['No Data']);
     }
   };
 
   if (!courseStepDetails) {
-    return <div>No Data</div>;
+    return <div>{lngsltd["No Data"]}</div>;
   }
 
   const removeMedia = async (index) => {
     if (activeDiv === 'Image' && Array.isArray(imageFileNames) && imageFileNames.length > index) {
-      const removedFileName = imageFileNames[index];
-      console.log(removedFileName)
+      const removedFileName = imageFileNames[index];      
       handleRemoveFile(removedFileName);
       setImageUrls((prevImageUrls) => {
         const updatedImageUrls = [...prevImageUrls];
@@ -183,18 +183,16 @@ const CoursesMain = () => {
         return updatedImageUrls;
       });
     } else if (activeDiv === 'Video' && Array.isArray(videoUrls) && videoUrls.length > 0) {
-      const removedFileName = getFileNameFromUrl(videoUrls[0]);
-      console.log(removedFileName)
+      const removedFileName = getFileNameFromUrl(videoUrls[0]);      
       handleRemoveFile(removedFileName);
       setVideoUrls([]);
 
     }
-    toast.success('File has been deleted');
+    toast.success(lngsltd['File has been deleted']);
   };
 
   const handleRemoveFile = async (fileName) => {
-    if (selectedStep) {
-      console.log("remove image called")
+    if (selectedStep) {      
       const apiEndpoint = `${apiUrl}/CourseStep/removefile?CourseID=${selectedStep.courseID}&StepID=${selectedStep.stepNo}&ContentType=${selectedStep.contentType}&FileName=${fileName}`;
 
       try {
@@ -232,9 +230,8 @@ const CoursesMain = () => {
       }
 
       axios.post(apiEndpoint, formData, { headers })
-        .then(response => {
-          console.log('Saved Successfully:', response.data);
-          toast.success('Saved Successfully');
+        .then(response => {          
+          toast.success(lngsltd['Saved Successfully']);
           fetchCourseSteps();
           setTimeout(() => {
             window.location.reload();
@@ -242,10 +239,10 @@ const CoursesMain = () => {
         })
         .catch(error => {
           console.error('Save failed', error);
-          toast.error('Save failed');
+          toast.error(lngsltd['Save failed, please refresh the page try again']);
         });
     } else {
-      return alert('Sorry, you did not select the step, please refresh the page and then select a step and proceed');
+      return alert(lngsltd['Sorry, you did not select the step, please refresh the page and then select a step and proceed']);
     }
   };
 
@@ -301,7 +298,7 @@ const CoursesMain = () => {
                     </div>
                     <div className='d-flex justify-content-center'>
                       <button className='remove-media-button btn btn-info btn-sm m-3' onClick={() => removeMedia(index)}>
-                        Remove
+                      {lngsltd["Remove Image"]}
                       </button>
                     </div>
                     <hr></hr>
@@ -325,12 +322,12 @@ const CoursesMain = () => {
                   <div>
                     <video controls autoPlay width='100%' height='350'>
                       <source src={videoUrls[0]} type='video/mp4' />
-                      Your browser does not support the video tag.
+                      {lngsltd["Your browser does not support the video tag"]}
                     </video>
                   </div>
                   <div className='d-flex justify-content-center'>
                     <button className='remove-media-button btn btn-info' onClick={() => removeMedia(0)}>
-                      Remove Video
+                    {lngsltd["Remove Video"]}
                     </button>
                   </div>
                   <hr></hr>
@@ -347,10 +344,10 @@ const CoursesMain = () => {
 
   //Deletion of step
   const handleDelete = async (step) => {
-    if (window.confirm("Are you sure to delete this Course Step") === true) {
+    if (window.confirm(lngsltd["Are you sure to delete this Course Step"]) === true) {
       await axios.delete(`${apiUrl}/CourseStep/deletestepno?CourseID=${step.courseID}&StepNo=${step.stepNo}`, { headers })
         .then((result) => {
-          toast.success('Course Step has been deleted');
+          toast.success(lngsltd['Course Step has been deleted']);  
           setActiveDiv('');
           setImageUrl('');
           setVideoUrl('');
@@ -374,9 +371,7 @@ const CoursesMain = () => {
         setEditStepContent(result.data.stepContent);
         setEditContentType(result.data.contentType);
         setEditDescription(result.data.description);
-        setEditID(id);
-        console.log(result);
-        console.log(editCourseID)
+        setEditID(id);        
       })
       .catch((error) => {
         console.log(error)
@@ -395,13 +390,12 @@ const CoursesMain = () => {
       "stepContent": editStepContent,
       "contentType": editContentType,
       "description": editDescription
-    }
-    console.log({ editCourseID }, { editStepNo }, { editStepTitle }, { editStepContent }, { editContentType }, { editDescription }, { editID })
+    }    
     axios.put(url, data, { headers })
       .then((result) => {
         handleCloseEdit();
         fetchCourseSteps();
-        toast.success('Step Title has been updated');
+        toast.success(lngsltd['Step Title has been updated']);
       }).catch((error) => {
         toast.error(error);
       })
@@ -409,10 +403,10 @@ const CoursesMain = () => {
 
   const validateStepNumber = (value) => {
     if (!/^\d+$/.test(value)) {
-      return 'Please enter only numbers';
+      return lngsltd['Please enter only numbers'];
     }
    else if (parseInt(value) < 1 || parseInt(value) > 1000) {
-    return 'Step Number should be more than 0';
+    return lngsltd['Step Number should be more than 0'];
   }
     return '';
   };
@@ -429,7 +423,7 @@ const CoursesMain = () => {
   //Add New Step
   const handleSave = () => {
     if (!newStepData.courseNumber || !newStepData.stepNumber || !newStepData.stepTitle) {
-      toast.error('Please fill in all the required fields.');
+      toast.error(lngsltd['Please fill in all the required fields.']);
       return;
     }
     const newStep = {
@@ -443,7 +437,7 @@ const CoursesMain = () => {
     axios.post(`${apiUrl}/CourseStep`, newStep, { headers })
       .then(response => {
 
-        toast.success('New step added successfully.');
+        toast.success(lngsltd['New step added successfully.']);
 
         handleCloseAdd();
 
@@ -453,7 +447,7 @@ const CoursesMain = () => {
         newStepData.stepTitle = "";
       })
       .catch(error => {
-        toast.error('Error while adding new step, please try again.');
+        toast.error(lngsltd['Error while adding new step, please refresh the page and try again.']);
         console.error('Error adding new step:', error);
       });
   };
@@ -463,7 +457,7 @@ const CoursesMain = () => {
       <div className="left-container">
         <div className="left-content">
           <div className="content-heading">
-            <h2>Course Steps</h2>
+            <h2>{lngsltd["Course Steps"]}</h2>
           </div>
           <div>
             {courseStepDetails.map((step, index) => (
@@ -494,18 +488,18 @@ const CoursesMain = () => {
             <button
               className={`btn btn-sm ${activeDiv === 'Image' ? 'btn-success active' : 'btn-secondary'} me-2 px-2 py-2 fw-bold fs-12`}
               onClick={handleImageButtonClick}>
-              Image
+              {lngsltd["Image"]}
             </button>
             <button
               className={`btn btn-sm ${activeDiv === 'Video' ? 'btn-success active' : 'btn-secondary'} me-2 px-2 py-2 fw-bold fs-12`}
               onClick={handleVideoButtonClick}>
-              Video
+              {lngsltd["Video"]}
             </button>
           </div>
           {renderRightTopContent()}
         </div>
         <div className='right-content-bottom'>
-          <div className="section-title">Description</div>
+          <div className="section-title">{lngsltd["Description"]}</div>
 
           <JoditEditor
             ref={editorDescription}
@@ -514,14 +508,14 @@ const CoursesMain = () => {
           />
 
           <div className='text-center'>
-            <button className='btn btn-sm btn-success me-2 px-3 py-2 fw-bold fs-6 mt-3' onClick={saveContentAndDescription}>Save</button>
+            <button className='btn btn-sm btn-success me-2 px-3 py-2 fw-bold fs-6 mt-3' onClick={saveContentAndDescription}>{lngsltd["Save"]}</button>
           </div>
         </div>
       </div>
       {/* Modal pop-up for adding new User */}
       <Modal show={showadd} onHide={handleCloseAdd}>
         <Modal.Header className='bg-light justify-content-center' closeButton>
-          <Modal.Title>Add a new step</Modal.Title>
+          <Modal.Title>{lngsltd["Add a new step"]}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div>
@@ -544,17 +538,17 @@ const CoursesMain = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant='secondary' onClick={handleCloseAdd}>
-            Close
+          {lngsltd["Close"]}
           </Button>
           <Button variant='primary' onClick={handleSave}>
-            Add Step
+          {lngsltd["Add Step"]}
           </Button>
         </Modal.Footer>
 
       </Modal>
       <Modal show={showedit} onHide={handleCloseEdit}>
         <Modal.Header>
-          <Modal.Title>Edit the Step Title</Modal.Title>
+          <Modal.Title>{lngsltd["Edit the Step Title"]}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
@@ -565,10 +559,10 @@ const CoursesMain = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseEdit}>
-            Close
+          {lngsltd["Close"]}
           </Button>
           <Button variant="primary" onClick={handleUpdate}>
-            Save Changes
+          {lngsltd["Save Changes"]}
           </Button>
         </Modal.Footer>
       </Modal>

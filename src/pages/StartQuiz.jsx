@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './StartQuiz.css'
+import './StartQuiz.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const StartQuiz = () => {
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+    const lngsltd=JSON.parse(localStorage.getItem('languageSelected'));
     const  headers= {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${userDetails.token}`
@@ -22,8 +25,7 @@ const StartQuiz = () => {
     //Environment variables
     const apiUrl=process.env.REACT_APP_API_URL;
 
-    useEffect(() => {
-        console.log("courseID", courseid);
+    useEffect(() => {        
         fetchQuiz();
     }, [courseid]);
 
@@ -32,8 +34,7 @@ const StartQuiz = () => {
             const response = await axios.get(`${apiUrl}/Quiz/ByCourse/${courseid}`, { headers });
             setCurrentQuiz(response.data);
             const questionsResponse = await axios.get(`${apiUrl}/Question/QuizID/${response.data.quizID}`, { headers });
-            setQuestions(questionsResponse.data);
-            console.log("Questions", questionsResponse.data)
+            setQuestions(questionsResponse.data);            
             createUserQuiz(response.data.quizID);
         } catch (error) {
             console.error('Error fetching quiz:', error);
@@ -54,8 +55,7 @@ const StartQuiz = () => {
                 score: 0
             };
 
-            const response = await axios.post(`${apiUrl}/UserQuiz`, userQuizData, { headers });
-            console.log('User quiz data', response.data);
+            const response = await axios.post(`${apiUrl}/UserQuiz`, userQuizData, { headers });            
 
             setUserQuiz(response.data);
         } catch (error) {
@@ -85,9 +85,9 @@ const StartQuiz = () => {
                 score: score
             };
 
-            const response = await axios.put(`${apiUrl}/UserQuiz/${userQuizData.userQuizID}`, userQuizData, { headers });
-            console.log('Updated User quiz data', response.data);
-            window.alert(`You Scored: ${score}`);
+            const response = await axios.put(`${apiUrl}/UserQuiz/${userQuizData.userQuizID}`, userQuizData, { headers });            
+            window.alert(`You Scored/Du scoret: ${score}`);
+            // window.alert(lngsltd[`You Scored: ${score}`]);
             setUserQuiz(null);
             navigate(`/courses`);
         } catch (error) {
@@ -115,21 +115,17 @@ const StartQuiz = () => {
             selectedOption: selectedOption,
             correctOption: currentQuestion.correctOption,
             isCorrect: selectedOption === currentQuestion.correctOption
-        };
-        console.log("useranswerdata", userAnswerData)
-        const response = await axios.post(`${apiUrl}/UserAnswer`, userAnswerData, { headers });
-        console.log('User answer saved successfully:', response.data);
+        };        
+        const response = await axios.post(`${apiUrl}/UserAnswer`, userAnswerData, { headers });        
         setSelectedOption(null);
         UpdateUserQuiz();
     }
 
     const handleNextQuestion = async () => {
         if (selectedOption !== null) {
-            if (currentQuestionIndex === questions.length - 1) {
-                console.log(questions);
+            if (currentQuestionIndex === questions.length - 1) {                
                 handleSubmit();
-            } else {
-                console.log("handle next");
+            } else {                
                 try {
                     const userAnswerData = {
                         userAnswerID: 0,
@@ -138,26 +134,41 @@ const StartQuiz = () => {
                         selectedOption: selectedOption,
                         correctOption: currentQuestion.correctOption,
                         isCorrect: selectedOption === currentQuestion.correctOption
-                    };
-                    console.log("useranswerdata", userAnswerData)
-                    const response = await axios.post(`${apiUrl}/UserAnswer`, userAnswerData, { headers });
-                    console.log('User answer saved successfully:', response.data);
+                    };                    
+                    const response = await axios.post(`${apiUrl}/UserAnswer`, userAnswerData, { headers });                    
                     setSelectedOption(null);
                 } catch (error) {
                     console.error('Error saving user answer:', error);
                 }
                 setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+                const userQuizID = userQuiz.userQuizID; 
+            const questionID = questions[currentQuestionIndex + 1].id; 
+            await fetchSelectedOption(userQuizID, questionID);
             }
         } else {
-            console.log("Please select an option before proceeding to the next question.");
+            toast.info(lngsltd["Please select an option before proceeding to the next question."])
+            // console.log("Please select an option before proceeding to the next question.");
+        }
+    };
+    const fetchSelectedOption = async (userQuizID, questionID) => {
+        try {
+            // console.log("fetch selected option", userQuizID, questionID);
+            const response = await axios.get(`https://localhost:7295/api/UserAnswer/${userQuizID}/${questionID}`);
+            setSelectedOption(response.data);
+            // console.log("selected option", response.data, userQuizID, questionID);
+        } catch (error) {
+            console.error('Error fetching selected option:', error);
         }
     };
 
     const handlePrevious = () => {
         setCurrentQuestionIndex((prevIndex) =>prevIndex - 1);
+        const userQuizID = userQuiz.userQuizID; 
+        const questionID = questions[currentQuestionIndex - 1].id;
+        fetchSelectedOption(userQuizID, questionID);
     }
     const handleExit = () => {
-        const confirmed = window.confirm('Are you sure you want to exit the quiz? Your progress will not be saved.');
+        const confirmed = window.confirm(lngsltd['Are you sure you want to exit the quiz?']);
         if (confirmed) {
             navigate(`/courses`);
         }
@@ -170,8 +181,14 @@ const StartQuiz = () => {
     }, [currentQuestionIndex, questions]);
 
     return (
-        <div className="startquiz-container">
-
+        <div className="startquiz-container d-flex flex-column w-100 align-items-center">
+             <ToastContainer 
+            position="top-center" // Position at the bottom right corner
+            autoClose={5000} // Close after 5 seconds
+            // hideProgressBar={false} // Show progress bar
+            newestOnTop={false} // Display newer notifications below older ones
+            closeOnClick // Close the notification when clicked
+            />  
             <div className="quiz-title">
                 {currentQuiz ? currentQuiz.title : "Loading..."}
             </div>
@@ -179,7 +196,7 @@ const StartQuiz = () => {
                 <div className="question-container ">
                     {currentQuestion ? (
                         <div className="datacontainer">
-                            <p className="qstn">Question {currentQuestion.questionNo}: {currentQuestion.questionText}</p>
+                            <p className="qstn">{lngsltd["Question"]} {currentQuestion.questionNo}: {currentQuestion.questionText}</p>
                             {currentQuestion.imageName !== "No Image" && currentQuestion.imageName ? (
                                 <div className="image-container">
                                     <img
@@ -240,7 +257,7 @@ const StartQuiz = () => {
 
                         </div>
                     ) : (
-                        <p>No questions available</p>
+                        <p>{lngsltd["Loading....Please wait"]}</p>
                     )}
                 </div>
                 <br></br>
@@ -249,18 +266,18 @@ const StartQuiz = () => {
                         className="exit-button"
                         onClick={handleExit}
                     >
-                        Exit
+                        {lngsltd["Exit"]}
                     </button>
                     <button
                      className="previous-button" 
                      onClick={handlePrevious}  disabled={currentQuestionIndex === 0}>
-                        Previous
+                        {lngsltd["Previous"]}
                      </button>
                     <button
                         className="next-button"
                         onClick={handleNextQuestion}
                     >
-                        Next
+                       {lngsltd["Next"]} 
                     </button>
                    
                 </div>

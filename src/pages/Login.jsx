@@ -1,24 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { Navigate, useNavigate } from 'react-router-dom';
 import '../App.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login(props) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loggedIn, setLoggedIn] = useState(false);
     const navigate = useNavigate();
+    const [culture, setCulture] = useState('en-US');
 
-    const [localizedStrings, setLocalizedStrings] = useState({});
+    // const [localizedStrings, setLocalizedStrings] = useState({});
+    const [localizedStrings, setLocalizedStrings] = useState({"Login": "Login","UserName": "UserName","Password": "Password","Enter your username": "Enter your username","Enter your password":"Enter your password"});
+    localStorage.setItem('isLoggedIn','null');
 
     //Environment variables
-    const apiUrl=process.env.REACT_APP_API_URL;
+    const apiUrl = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         // Fetch localized strings when component mounts
-        fetchLocalizedStrings('en-US');
-    }, []); // Fetch data only once when component mounts
+        fetchLocalizedStrings(culture);
+    }, [culture]); // Fetch data only once when component mounts
 
     const fetchLocalizedStrings = async (culture) => {
         try {
@@ -29,17 +34,18 @@ function Login(props) {
                 }
             });
             setLocalizedStrings(response.data);
-            localStorage.setItem('languageSelected',JSON.stringify(response.data));
+            localStorage.setItem('languageSelected', JSON.stringify(response.data));
+            return response.data;
         } catch (error) {
-            console.error('Error fetching localized strings:', error);
+            toast.error('Error fetching data:', error);
         }
     };
+    const lang = useMemo(() => localizedStrings, [localizedStrings]);
 
     const handleLogin = () => {
 
         axios.post(`${apiUrl}/Login`, { username, password })
             .then(response => {
-                console.log('Login successful:', response.data);
                 localStorage.setItem('userDetails', JSON.stringify(response.data));
                 setLoggedIn(true);
                 props.setLoggedIn(true);
@@ -48,29 +54,35 @@ function Login(props) {
 
             })
             .catch(error => {
-                alert('please enter valid userName and password')
+                toast.error('Please enter valid UserName and Password')
                 props.setLoggedIn(false);
             });
     };
 
     return (
-        <>
+        <div className="vh-100 d-flex flex-column">
             <div className='loginheader' style={{ color: "red" }}>SKEIDAR LIVING |<span style={{ color: "white" }}> GROUP</span></div>
-
+            <ToastContainer
+                position="bottom-right" // Position at the bottom right corner
+                autoClose={5000} // Close after 5 seconds
+                // hideProgressBar={false} // Show progress bar
+                newestOnTop={false} // Display newer notifications below older ones
+                closeOnClick // Close the notification when clicked
+            />
             <div className='btncltrs'>
-                    <button className='btnenglish' onClick={() => fetchLocalizedStrings('en-US')}>English</button>
-                    <button className='btnnorwagian' onClick={() => fetchLocalizedStrings('nb-NO')}>Norwegian</button>
-                </div>
-            <Container fluid className="cntnr d-flex align-items-center justify-content-center vh-100" style={{ backgroundColor: 'white' }}>
+                <button className='btnenglish' onClick={() => setCulture('en-US')}>English</button>
+                <button className='btnnorwagian' onClick={() => setCulture('nb-NO')}>Norwegian</button>
+            </div>
+            <Container fluid className="cntnr d-flex align-items-center justify-content-center " style={{ backgroundColor: 'white' }}>
                 {/* <h1>{localizedStrings.Welcome}</h1> */}
                 {/* <p>{localizedStrings.Sorry}</p> */}
-                
+
                 <Row style={{ maxWidth: '600px' }} className="loginbox justify-content-md-center mt-1 w-100 border border-4">
                     <Col xs={12} md={6} style={{ maxWidth: '600px' }} >
-                        <h2 className="logintitle text-center">{localizedStrings.Login}</h2>
+                        <h2 className="logintitle text-center">{lang.Login}</h2>
                         <Form>
                             <Form.Group controlId="formUsername">
-                                <Form.Label>{localizedStrings.UserName}:</Form.Label>
+                                <Form.Label>{lang.UserName}:</Form.Label>
                                 <Form.Control
                                     className='border border-4'
                                     type="text"
@@ -81,7 +93,7 @@ function Login(props) {
                             </Form.Group>
 
                             <Form.Group controlId="formPassword">
-                                <Form.Label className='mt-3'>{localizedStrings.Password}:</Form.Label>
+                                <Form.Label className='mt-3'>{lang.Password}:</Form.Label>
                                 <Form.Control
                                     className='border border-4'
                                     type="password"
@@ -92,14 +104,14 @@ function Login(props) {
                             </Form.Group>
                             <div className='text-center '>
                                 <Button variant="primary" type="button" className='btnlgn justify-content-md-center w-50 ' onClick={handleLogin}>
-                                {localizedStrings.Login}
+                                    {localizedStrings.Login}
                                 </Button>
                             </div>
                         </Form>
                     </Col>
                 </Row>
             </Container>
-        </>
+        </div>
     );
 }
 

@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;  
   }
   html{
     position: relative;
@@ -67,7 +68,7 @@ ul li {
     /* margin-top: auto; */
 }
 
-.logout-button {
+/* .logout-button {
     padding: 8px 16px;
     background: none;
     color: white;
@@ -75,7 +76,7 @@ ul li {
     cursor: pointer;
     border: 2px solid white;
     border-radius: 5px;
-}
+} */
 
 .logout-button:hover {
     background: #292F2A;

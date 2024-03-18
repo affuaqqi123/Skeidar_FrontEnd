@@ -11,6 +11,7 @@ import './CoursesMain.css';
 const Quiz = () => {
     
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+    const lngsltd=JSON.parse(localStorage.getItem('languageSelected'));
     
     const headers = { 
         'Content-Type': 'multipart/form-data',
@@ -79,7 +80,7 @@ const Quiz = () => {
         axios.get(`${apiUrl}/Course`, { headers })
             .then((result) => {                
                 setCourseData(result.data);
-                console.log("the value of coursename is :",result.data[0].courseName);
+               
             })
             .catch((error) => {
                 console.log(error);
@@ -101,10 +102,10 @@ const Quiz = () => {
     };
 
     const handleDelete = (id) => {
-        if (window.confirm('Are you sure you want to delete this quiz?')) {
+        if (window.confirm(lngsltd['Are you sure you want to delete this quiz?'])) {
             axios.delete(`${apiUrl}/Quiz/${id}`, { headerjsondata })
                 .then((result) => {
-                    toast.success('Quiz has been deleted');
+                    toast.success(lngsltd['Quiz has been deleted']);
                     getData();
                 })
                 .catch((error) => {
@@ -146,7 +147,7 @@ const Quiz = () => {
                 handleClose();
                 getData();
                 clear();
-                toast.success('Quiz has been updated');
+                toast.success(lngsltd['Quiz has been updated']);
             })
             .catch((error) => {
                 toast.error(error);
@@ -187,7 +188,7 @@ const Quiz = () => {
                 handleCloseAdd();
                 getData();
                 clear();
-                toast.success('New quiz has been added');
+                toast.success(lngsltd['New quiz has been added']);
             })
             .catch((error) => {
                 toast.error(error);
@@ -223,22 +224,22 @@ const Quiz = () => {
     };
 
     return (
-        <div className='quizdiv d-flex flex-column align-items-center bg-light m-3'>
+        <div className='quizdiv d-flex flex-column w-100 align-items-center bg-light'>
             <br />
-            <h1>List of Quizzes</h1>
-            <div className='w-75 rounded bg-white border shadow p-4'>
+            <h1>{lngsltd["List of Quizzes"]}</h1>
+            <div className='w-100 rounded bg-white border shadow p-4'>
                 <ToastContainer />
 
-                <button style={{ paddingLeft: '15px', width: '135px' }} className='btn btn-success' onClick={handleShowAdd}>Add</button>
+                <button className='btn btn-success' onClick={handleShowAdd}>Add</button>
 
                 <Table striped bordered hover size='sm' responsive="sm" style={{ marginTop: '15px' }}>
-                    <thead>
+                    <thead className="thead-dark">
                         <tr>
                             <th className='text-center'>#</th>
-                            <th className='text-center'>CourseName</th>
-                            <th className='text-center'>Quiz Title</th>
-                            <th className='text-center'>Description</th>
-                            <th className='text-center'>Actions</th>
+                            <th className='text-center'>{lngsltd["CourseName"]}</th>
+                            <th className='text-center'>{lngsltd["Quiz Title"]}</th>
+                            <th className='text-center'>{lngsltd["Description"]}</th>
+                            <th className='text-center'>{lngsltd["Actions"]}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -251,28 +252,28 @@ const Quiz = () => {
                                 <td className='text-center'>{d.title}</td>
                                 <td className='text-center'>{d.description}</td>
                                 <td className='text-center'>
-                                    <button className='btn btn-sm btn-primary me-2 px-3' onClick={() => handleEdit(d.quizID)}>Edit</button>
-                                    <button className='btn btn-sm btn-danger' onClick={() => handleDelete(d.quizID)}>Delete</button>
-                                    <button className='btn btn-sm btn-primary me-2 px-3' onClick={() => handleAddQuestions(d.quizID)}>Add Questions</button>
+                                    <button className='btn btn-sm btn-primary me-2 px-3' onClick={() => handleEdit(d.quizID)}>{lngsltd["Edit"]}</button>
+                                    <button className='btn btn-sm btn-danger' onClick={() => handleDelete(d.quizID)}>{lngsltd["Delete"]}</button>
+                                    <button className='btn btn-sm btn-info' onClick={() => handleAddQuestions(d.quizID)}>{lngsltd["Add Questions"]}</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </Table>
                 <Modal show={show} onHide={handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Edit Quiz</Modal.Title>
+                    <Modal.Header closeButton style={{backgroundColor:'#efedf0'}}>
+                        <Modal.Title>{lngsltd["Edit Quiz"]}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                     <div >
-                    <label >Select Course:</label>
+                    <label >{lngsltd["Select Course"]}<span style={{ color: 'red' }}>*</span></label>
                                   <br />
                                   <select
                                       className='form-control mb-3'
                                       value={editCourseID}
                                       onChange={(e) => setEditCourseID(e.target.value)}
                                   >
-                                      <option value='' >Select Course</option>
+                                      <option value='' disabled>{lngsltd["Select Course Name"]}</option>
                                       {courseData.map((data) => (
                                           <option key={data.courseID} value={data.courseID}>
                                               {data.courseName}
@@ -286,38 +287,41 @@ const Quiz = () => {
                         <div className="text-danger">{editCourseNameError}</div>
                         </div> 
                         <div className="mb-3">
-                            <label htmlFor="editTitle" className="form-label">Title</label>
+                            <label htmlFor="editTitle" className="form-label">{lngsltd["Title"]}<span style={{ color: 'red' }}>*</span></label>
                             <input type="text" className="form-control" id="editTitle" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
                             <div className="text-danger">{editQuizTitleError}</div>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="editDescription" className="form-label">Description</label>
+                            <label htmlFor="editDescription" className="form-label">{lngsltd["Description"]}</label>
                             <textarea className="form-control" id="editDescription" rows="3" value={editDescription} onChange={(e) => setEditDescription(e.target.value)}></textarea>
                         </div>
                         
                     </Modal.Body>
                     <Modal.Footer>
+                    <Button variant="success" onClick={handleUpdate}>
+                        {lngsltd["Save"]}
+                        </Button>
                         <Button variant="secondary" onClick={handleClose}>
-                            Close
+                        {lngsltd["Cancel"]}
                         </Button>
-                        <Button variant="primary" onClick={handleUpdate}>
-                            Save Changes
-                        </Button>
+                        
                     </Modal.Footer>
                 </Modal>
 
                 <Modal show={showAdd} onHide={handleCloseAdd}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Add New Quiz</Modal.Title>
+                    <Modal.Header closeButton style={{backgroundColor:'#efedf0'}}>
+                        <Modal.Title>{lngsltd["Add Quiz"]}  </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                     <div >
+                    <label htmlFor="coursename" className="form-label">{lngsltd["Select Course"]}<span style={{ color: 'red' }}>*</span></label>
                     <select
                                       className='form-control mb-3'
+                                      id='coursename'
                                       value={newCourseID}
                                       onChange={(e) => setNewCourseID(e.target.value)}
                                   >
-                                      <option value=''>Select Course Name</option>
+                                      <option value='' disabled>{lngsltd["Select Course Name"]}</option>
                                       {courseData.map((data) => (
                                           <option key={data.courseID} value={data.courseID}>
                                               {data.courseName}
@@ -329,22 +333,23 @@ const Quiz = () => {
                             <input type="text" className="form-control" id="newCourseID" value={newCourseID} onChange={(e) => setNewCourseID(e.target.value)} /> */}
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="newTitle" className="form-label">Title</label>
+                            <label htmlFor="newTitle" className="form-label">{lngsltd["Title"]}<span style={{ color: 'red' }}>*</span></label>
                             <input type="text" className="form-control" id="newTitle" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
                             <div className="text-danger">{quizTitleError}</div>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="newDescription" className="form-label">Description</label>
+                            <label htmlFor="newDescription" className="form-label">{lngsltd["Description"]}</label>
                             <textarea className="form-control" id="newDescription" rows="3" value={newDescription} onChange={(e) => setNewDescription(e.target.value)}></textarea>
                         </div>
                         
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={handleCloseAdd}>
-                            Close
+                        
+                        <Button variant="success" onClick={handleSave}>
+                        {lngsltd["Add"]}
                         </Button>
-                        <Button variant="primary" onClick={handleSave}>
-                            Add Quiz
+                        <Button variant="secondary" onClick={handleCloseAdd}>
+                        {lngsltd["Cancel"]}
                         </Button>
                     </Modal.Footer>
                 </Modal>

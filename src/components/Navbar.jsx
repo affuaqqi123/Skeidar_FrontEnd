@@ -15,17 +15,21 @@ const Navbar = ({ onLogout }) => {
   };
   const userDetails = JSON.parse(localStorage.getItem('userDetails'));
   const lngsltd=JSON.parse(localStorage.getItem('languageSelected'));
+  const textStyle = {
+    textDecoration: 'none !important'
+    
+  };
   return (
     <div className='headerpage'>
       <div className='navbar'>
         <img src={companylogo} alt="" className='logo' />
         <ul>
           <li>
-            <u>{lngsltd["Welcome"]}</u>
-            <span style={{ fontWeight: "800", marginLeft: "10px" }}>{userDetails ? userDetails.userName : 'User'}</span>
+            <u style={textStyle}>{lngsltd["Welcome"]}</u>
+            <span style={{marginLeft: "10px" }}>{userDetails ? userDetails.userName : 'User'}</span>
           </li>
           <li>
-            <button className="logout-button" onClick={handleLogout}>
+            <button className="btn btn-light" onClick={handleLogout}>
             {lngsltd["Logout"]}
             </button>
           </li>

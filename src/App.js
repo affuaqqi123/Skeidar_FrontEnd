@@ -14,6 +14,7 @@ import Quiz from './pages/Quiz.jsx';
 import StartQuiz from './pages/StartQuiz.jsx';
 import Questions from './pages/Questions.jsx';
 import UserGroup from './pages/UserGroup.jsx';
+import CourseReport from './pages/CourseReport.jsx';
 import Navbar from './components/Navbar.jsx';
 import { Navigate } from 'react-router-dom';
 
@@ -66,6 +67,7 @@ function App() {
                 <Route path="/groups" element={<Groups />} />
                 <Route path="/coursesmain/:id" element={<CoursesMain />} />
                 <Route path="/startcoursepage/:id" element={<StartCoursePage />} />
+                <Route path="/coursereport/:id" element={<CourseReport />} />
               </Routes>
             </div>
           </div>
