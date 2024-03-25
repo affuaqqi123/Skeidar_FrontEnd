@@ -120,14 +120,14 @@ const Quiz = () => {
 
 
         if (!editCourseID) {
-            setEditCourseNameError('Please select a CourseName');
+            setEditCourseNameError(lngsltd['Please select a CourseName']);
             formIsValid = false;
         } else {
             setEditCourseNameError('');
         }
 
         if (!editTitle) {
-            setEditQuizTitleError('Quiz Title is required');
+            setEditQuizTitleError(lngsltd['Quiz Title is required']);
             formIsValid = false;
         } else {
             setEditQuizTitleError('');
@@ -160,14 +160,14 @@ const Quiz = () => {
 
 
         if (!newCourseID) {
-            setCourseNameError('Please select a CourseName');
+            setCourseNameError(lngsltd['Please select a CourseName']);
             formIsValid = false;
         } else {
             setCourseNameError('');
         }
 
         if (!newTitle) {
-            setQuizTitleError('Quiz Title is required');
+            setQuizTitleError(lngsltd['Quiz Title is required']);
             formIsValid = false;
         } else {
             setQuizTitleError('');

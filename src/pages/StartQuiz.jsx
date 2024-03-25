@@ -153,7 +153,7 @@ const StartQuiz = () => {
     const fetchSelectedOption = async (userQuizID, questionID) => {
         try {
             // console.log("fetch selected option", userQuizID, questionID);
-            const response = await axios.get(`https://localhost:7295/api/UserAnswer/${userQuizID}/${questionID}`);
+            const response = await axios.get(`${apiUrl}/UserAnswer/${userQuizID}/${questionID}`);
             setSelectedOption(response.data);
             // console.log("selected option", response.data, userQuizID, questionID);
         } catch (error) {
@@ -181,19 +181,19 @@ const StartQuiz = () => {
     }, [currentQuestionIndex, questions]);
 
     return (
-        <div className="startquiz-container d-flex flex-column w-100 align-items-center">
+        <div className="startquiz-container ">
              <ToastContainer 
-            position="top-center" // Position at the bottom right corner
-            autoClose={5000} // Close after 5 seconds
-            // hideProgressBar={false} // Show progress bar
-            newestOnTop={false} // Display newer notifications below older ones
-            closeOnClick // Close the notification when clicked
+            position="top-center" 
+            autoClose={5000}             
+            newestOnTop={false} 
+            closeOnClick 
             />  
             <div className="quiz-title">
                 {currentQuiz ? currentQuiz.title : "Loading..."}
             </div>
+            {/* <div className="quiz-box" style={{ maxWidth: "600px" }}> */}
             <div className="quiz-box">
-                <div className="question-container ">
+                <div className="question-container">
                     {currentQuestion ? (
                         <div className="datacontainer">
                             <p className="qstn">{lngsltd["Question"]} {currentQuestion.questionNo}: {currentQuestion.questionText}</p>
@@ -201,8 +201,8 @@ const StartQuiz = () => {
                                 <div className="image-container">
                                     <img
                                         src={`${apiUrl}/Question/Image/${currentQuestion.quizID}/${currentQuestion.questionNo}/${currentQuestion.imageName}`}
-                                        alt="Question"
-                                        style={{ maxWidth: "500px", maxHeight: "400px", width: "auto", height: "auto" }}
+                                        alt="Image"
+                                        style={{ maxWidth:"600px",width: "100%", height: "auto" }}
                                     />
                                 </div>
                             ) : null}

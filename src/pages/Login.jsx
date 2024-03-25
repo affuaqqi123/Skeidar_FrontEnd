@@ -37,7 +37,8 @@ function Login(props) {
             localStorage.setItem('languageSelected', JSON.stringify(response.data));
             return response.data;
         } catch (error) {
-            toast.error('Error fetching data:', error);
+            // toast.error('Error fetching data:', error);
+            toast.error(localizedStrings['Something went wrong while loading the page'], error);
         }
     };
     const lang = useMemo(() => localizedStrings, [localizedStrings]);
@@ -54,7 +55,7 @@ function Login(props) {
 
             })
             .catch(error => {
-                toast.error('Please enter valid UserName and Password')
+                toast.error(localizedStrings['Please enter valid UserName and Password'])
                 props.setLoggedIn(false);
             });
     };
@@ -69,7 +70,7 @@ function Login(props) {
                 newestOnTop={false} // Display newer notifications below older ones
                 closeOnClick // Close the notification when clicked
             />
-            <div className='btncltrs'>
+            <div className='btncltrs' style={{float:'right'}}>
                 <button className='btnenglish' onClick={() => setCulture('en-US')}>English</button>
                 <button className='btnnorwagian' onClick={() => setCulture('nb-NO')}>Norwegian</button>
             </div>

@@ -86,12 +86,12 @@ const UserGroups = () => {
 
     const getUserById = (userId) => {
         const user = userData.find((user) => user.userID === userId);
-        return user ? user.username : 'No User Found';
+        return user ? user.username : lngsltd['No User Found'];
     };
 
     const getGroupById = (groupId) => {
         const group = groupData.find((group) => group.groupID === groupId);
-        return group ? group.groupName : 'No Group Found';
+        return group ? group.groupName : lngsltd['No Group Found'];
     };
 
 
@@ -260,7 +260,7 @@ const UserGroups = () => {
                         ) : (
                             <tr>
                                 <td colSpan={'4'}>
-                                    <h4 style={{ paddingTop: '25px', textAlign: 'center' }}> {lngsltd["Loading....Please wait"]}</h4>
+                                    <h4 style={{ paddingTop: '25px', textAlign: 'center' }}> {lngsltd["Loading...Please wait"]}</h4>
                                 </td>
                             </tr>
                         )}

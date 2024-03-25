@@ -1,17 +1,19 @@
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;  
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
 }
-html{
-    height: 100%;
+
+html {
+  height: 100%;
 }
-body{
+
+body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
- 
+
 }
 
 /* body#body { Background-color:red; } */
@@ -29,33 +31,34 @@ body{
 }
 
 .main-container {
-  max-width: 100vw;    
-  height: 100vh; 
-  display: flex;   
+  max-width: 100vw;
+  height: 100vh;
+  display: flex;
   font-family: cursive !important;
 }
-.cntnr{
+
+.cntnr {
   height: 100vh;
 }
 
-.loginbox{
+.loginbox {
   padding: 10px;
 }
 
-.btncltrs{
+.btncltrs {
   display: flex;
   float: right;
 }
 
-  .dimsns{
-    max-width: 100vw;    
-    height: 100vh;    
-    
-  }
+.dimsns {
+  max-width: 100vw;
+  height: 100vh;
+}
 
 
-.btnenglish{
-  background-color:purple; /* Green */
+.btnenglish {
+  background-color: purple;
+  /* Green */
   border: none;
   color: white;
   padding: 8px 20px;
@@ -66,11 +69,12 @@ body{
   margin-top: 5px;
   margin-right: 15px;
   border-radius: 10%;
-  
+
 }
 
-.btnnorwagian{
-  background-color:darkred; /* Green */
+.btnnorwagian {
+  background-color: darkred;
+  /* Green */
   border: none;
   color: white;
   padding: 8px 20px;
@@ -81,18 +85,20 @@ body{
   margin-top: 5px;
   margin-right: 15px;
   border-radius: 10%;
-  
+
 }
 
-  .sidebar {
-   background: #000;   
-}  
+.sidebar {
+  background: #000;
+}
 
 .main-content {
-  max-width: 100vw; 
-  height: 100vh;  
+  width: 100%;
+  height: 100%;
   flex: 1;
   overflow-y: auto;
+  display: flex;
+  justify-content: center;
 }
 
 .loginheader {
@@ -105,6 +111,6 @@ body{
 
 }
 
-.btnlgn{
+.btnlgn {
   margin-top: 25px !important;
 }

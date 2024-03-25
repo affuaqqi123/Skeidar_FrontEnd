@@ -483,7 +483,7 @@ const Courses = () => {
                     </Modal.Header>
                     <Modal.Body>
                         <div>
-                            <label>{lngsltd["Select Course"]}:<span style={{ color: 'red' }}>*</span></label>
+                            <label>{lngsltd["Course Name"]}:<span style={{ color: 'red' }}>*</span></label>
                             <input type="text" className="form-control mb-3" placeholder={lngsltd["Enter Course Name"]}
                                 value={editCourseName} onChange={(e) => setEditCourseName(e.target.value)} />
                         </div>
@@ -530,7 +530,7 @@ const Courses = () => {
                     </Modal.Header>
                     <Modal.Body>
                         <div>
-                            <label>{lngsltd["Select Course"]}:<span style={{ color: 'red' }}>*</span></label>
+                            <label>{lngsltd["Course Name"]}:<span style={{ color: 'red' }}>*</span></label>
                             <input type="text" className="form-control mb-3" placeholder={lngsltd["Enter Course Name"]}
                                 value={coursename} onChange={handleCourseNameChange} />
                             {courseNameError && <p className="text-danger">{courseNameError}</p>}

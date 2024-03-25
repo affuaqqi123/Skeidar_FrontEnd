@@ -86,7 +86,7 @@ const Groups = () => {
         let formIsValid = true;
 
         if (!editGroup) {
-            setEditGroupNameError('Name is required');
+            setEditGroupNameError(lngsltd['Name is required']);
             formIsValid = false;
         } else {
             setEditGroupNameError('');
@@ -114,7 +114,7 @@ const Groups = () => {
         let formIsValid = true;
 
         if (!group) {
-            setGroupNameError('GroupName is required');
+            setGroupNameError(lngsltd['GroupName is required']);
             formIsValid = false;
         } else {
             setGroupNameError('');

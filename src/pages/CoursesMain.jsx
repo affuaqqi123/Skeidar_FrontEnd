@@ -363,7 +363,12 @@ const CoursesMain = () => {
   const handleEdit = async (id) => {
 
     handleShowEdit();
-    axios.get(`${apiUrl}/CourseStep/${id}`, { headers })
+    axios.get(`${apiUrl}/CourseStep/${id}`, { 
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userDetails.token}`
+      }
+     })
       .then((result) => {
         setEditCourseID(result.data.courseID);
         setEditStepNo(result.data.stepNo);
@@ -391,7 +396,12 @@ const CoursesMain = () => {
       "contentType": editContentType,
       "description": editDescription
     }    
-    axios.put(url, data, { headers })
+    axios.put(url, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userDetails.token}`
+      }
+       })
       .then((result) => {
         handleCloseEdit();
         fetchCourseSteps();
@@ -434,7 +444,13 @@ const CoursesMain = () => {
       contentType: "Text",
       description: "<p>Add Description here</p>"
     };
-    axios.post(`${apiUrl}/CourseStep`, newStep, { headers })
+    axios.post(`${apiUrl}/CourseStep`, newStep, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userDetails.token}`
+        }
+       
+       })
       .then(response => {
 
         toast.success(lngsltd['New step added successfully.']);

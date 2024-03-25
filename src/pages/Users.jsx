@@ -166,41 +166,41 @@ const Users = () => {
         let formIsValid = true;
 
         if (!editName) {
-            setEditNameError('Name is required');
+            setEditNameError(lngsltd['Name is required']);
             formIsValid = false;
         } else {
             setEditNameError('');
         }
 
         if (!editEmail) {
-            setEditEmailError('Email is required');
+            setEditEmailError(lngsltd['Email is required']);
             formIsValid = false;
         } else if (!validateEmail(editEmail)) {
-            setEditEmailError('Invalid email format');
+            setEditEmailError(lngsltd['Invalid email format']);
             formIsValid = false;
         } else {
             setEditEmailError('');
         }
         const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]{8,}$/;
         if (!editPassword) {
-            setEditPasswordError('Password is required');
+            setEditPasswordError(lngsltd['Password is required']);
             formIsValid = false;
         } else if (!passwordRegex.test(editPassword)) {
-            setEditPasswordError('Password must contain at least 8 characters, including one uppercase, one number, and one symbol');
+            setEditPasswordError(lngsltd['Password must contain at least 8 characters, including one uppercase, one number, and one symbol']);
             formIsValid = false;
         } else {
             setEditPasswordError('');
         }
 
         if (!editRole) {
-            setEditRoleError('Role is required');
+            setEditRoleError(lngsltd['Role is required']);
             formIsValid = false;
         } else {
             setEditRoleError('');
         }
 
         if (!editStore) {
-            setEditStoreError('StoreID is required');
+            setEditStoreError(lngsltd['StoreID is required']);
             formIsValid = false;
         } else {
             setEditStoreError('');
@@ -231,24 +231,40 @@ const Users = () => {
     };
 
 
+    // const handlesend = async (id) => {
+    //     try {
+    //         const result = await axios.get(`${apiUrl}/User/${id}`, { headers });
+    //         debugger;
+    //         // Set state variables
+    //         setEName(result.data.username);
+    //         setEPassword(result.data.password);
+    //         setEEmail(result.data.userEmail);
+    //         // Perform the second API call after setting state
+    //         const url = `${apiUrl}/User/slgemail?recipientEmail=${result.data.userEmail}&username=${result.data.username}&password=${result.data.password}`;
+
+    //         await axios.post(url, {}, { headers });
+    //         toast.success(lngsltd['Email has been sent']);
+    //     } catch (error) {
+    //         console.log(error);
+    //         toast.error(lngsltd['Error sending email']);
+    //     }
+    // }
+
     const handlesend = async (id) => {
-        try {
-            const result = await axios.get(`${apiUrl}/User/${id}`, { headers });
 
-            // Set state variables
-            setEName(result.data.username);
-            setEPassword(result.data.password);
-            setEEmail(result.data.userEmail);
-            // Perform the second API call after setting state
-            const url = `${apiUrl}/User/slgemail?recipientEmail=${result.data.userEmail}&username=${result.data.username}&password=${result.data.password}`;
-
-            await axios.post(url, {}, { headers });
-            toast.success(lngsltd['Email has been sent']);
-        } catch (error) {
-            console.log(error);
-            toast.error(lngsltd['Error sending email']);
-        }
-    }
+        const result = await axios.get(`${apiUrl}/User/${id}`, { headers });
+        setEName(result.data.username);
+        setEPassword(result.data.password);
+        setEEmail(result.data.userEmail);
+        const url = `${apiUrl}/User/slgemail?recipientEmail=${result.data.userEmail}&username=${result.data.username}&password=${result.data.password}`;
+        await axios.post(url, {}, { headers })
+            .then((result) => {
+                toast.success(lngsltd['Email has been sent']);
+            }).catch((error) => {
+                // toast.error("Failed to send email: " + error.message);
+                toast.error(lngsltd["Failed to send email, Please check if email address is correct"]);
+            });
+    }
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
@@ -259,41 +275,41 @@ const Users = () => {
         let formIsValid = true;
 
         if (!name) {
-            setNameError('Name is required');
+            setNameError(lngsltd['Name is required']);
             formIsValid = false;
         } else {
             setNameError('');
         }
 
         if (!email) {
-            setEmailError('Email is required');
+            setEmailError(lngsltd['Email is required']);
             formIsValid = false;
         } else if (!validateEmail(email)) {
-            setEmailError('Invalid email format');
+            setEmailError(lngsltd['Invalid email format']);
             formIsValid = false;
         } else {
             setEmailError('');
         }
         const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]{8,}$/;
         if (!password) {
-            setPasswordError('Password is required');
+            setPasswordError(lngsltd['Password is required']);
             formIsValid = false;
         } else if (!passwordRegex.test(password)) {
-            setPasswordError('Password must contain at least 8 characters, including one capital letter, one number, and one symbol');
+            setPasswordError(lngsltd['Password must contain at least 8 characters, including one capital letter, one number, and one symbol']);
             formIsValid = false;
         } else {
             setPasswordError('');
         }
 
         if (!role) {
-            setRoleError('Role is required');
+            setRoleError(lngsltd['Role is required']);
             formIsValid = false;
         } else {
             setRoleError('');
         }
 
         if (!store) {
-            setStoreError('StoreID is required');
+            setStoreError(lngsltd['StoreID is required']);
             formIsValid = false;
         } else {
             setStoreError('');
@@ -368,7 +384,7 @@ const Users = () => {
 
                     {/* Search input column */}
                     <div className="col-md-3">
-                        <input type="text" className="form-control pb-2 mt-2" placeholder="Search by Username" value={search} onChange={(e) => setSearch(e.target.value)} />
+                        <input type="text" className="form-control pb-2 mt-2" placeholder={lngsltd["Search by Username"]} value={search} onChange={(e) => setSearch(e.target.value)} />
                     </div>
                     {/* Role filter input column */}
                     <div className="col-md-3">
@@ -485,7 +501,7 @@ const Users = () => {
 
                                 )
                                 :
-                                <tr><td colSpan={"7"}><h4 style={{ paddingTop: "25px", textAlign: "center" }}> {lngsltd["Loading....Please wait"]}</h4></td></tr>
+                                <tr><td colSpan={"7"}><h4 style={{ paddingTop: "25px", textAlign: "center" }}> {lngsltd["Loading...Please wait"]}</h4></td></tr>
                         }
                     </tbody>
                 </Table>

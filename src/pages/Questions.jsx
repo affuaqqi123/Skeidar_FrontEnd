@@ -86,37 +86,37 @@ const Questions = () => {
         clearErrors();
         let formIsValid = true;
         if (!newQuestion.questionText) {
-            setQuestionTextError('Question Text is required');
+            setQuestionTextError(lngsltd['Question Text is required']);
             formIsValid = false;
         } else {
             setQuestionTextError('');
         }
         if (!newQuestion.option1) {
-            setOption1Error('Option1 is required');
+            setOption1Error(lngsltd['Option1 is required']);
             formIsValid = false;
         } else {
             setOption1Error('');
         }
         if (!newQuestion.option2) {
-            setOption2Error('Option2 is required');
+            setOption2Error(lngsltd['Option2 is required']);
             formIsValid = false;
         } else {
             setOption2Error('');
         }
         if (!newQuestion.option3) {
-            setOption3Error('Option3 is required');
+            setOption3Error(lngsltd['Option3 is required']);
             formIsValid = false;
         } else {
             setOption3Error('');
         }
         if (!newQuestion.option4) {
-            setOption4Error('Option4 is required');
+            setOption4Error(lngsltd['Option4 is required']);
             formIsValid = false;
         } else {
             setOption4Error('');
         }
         if (!newQuestion.correctOption) {
-            setCorrectOptionError('Correct Option is required');
+            setCorrectOptionError(lngsltd['Correct Option is required']);
             formIsValid = false;
         } else {
             setCorrectOptionError('');
@@ -223,37 +223,37 @@ const Questions = () => {
         clearErrors();
         let formIsValid = true;
         if (!editQuestion.questionText) {
-            setEditQuestionTextError('Question Text is required');
+            setEditQuestionTextError(lngsltd['Question Text is required']);
             formIsValid = false;
         } else {
             setEditQuestionTextError('');
         }
         if (!editQuestion.option1) {
-            setEditOption1Error('Option1 is required');
+            setEditOption1Error(lngsltd['Option1 is required']);
             formIsValid = false;
         } else {
             setEditOption1Error('');
         }
         if (!editQuestion.option2) {
-            setEditOption2Error('Option2 is required');
+            setEditOption2Error(lngsltd['Option2 is required']);
             formIsValid = false;
         } else {
             setEditOption2Error('');
         }
         if (!editQuestion.option3) {
-            setEditOption3Error('Option3 is required');
+            setEditOption3Error(lngsltd['Option3 is required']);
             formIsValid = false;
         } else {
             setEditOption3Error('');
         }
         if (!editQuestion.option4) {
-            setEditOption4Error('Option4 is required');
+            setEditOption4Error(lngsltd['Option4 is required']);
             formIsValid = false;
         } else {
             setEditOption4Error('');
         }
         if (!editQuestion.correctOption) {
-            setEditCorrectOptionError('Correct Option is required');
+            setEditCorrectOptionError(lngsltd['Correct Option is required']);
             formIsValid = false;
         } else {
             setEditCorrectOptionError('');

@@ -16,7 +16,8 @@ const Navbar = ({ onLogout }) => {
   const userDetails = JSON.parse(localStorage.getItem('userDetails'));
   const lngsltd=JSON.parse(localStorage.getItem('languageSelected'));
   const textStyle = {
-    textDecoration: 'none !important'
+    textDecoration: 'none !important',
+    
     
   };
   return (
@@ -25,7 +26,7 @@ const Navbar = ({ onLogout }) => {
         <img src={companylogo} alt="" className='logo' />
         <ul>
           <li>
-            <u style={textStyle}>{lngsltd["Welcome"]}</u>
+            <span style={textStyle}> {lngsltd["Welcome"]}</span>
             <span style={{marginLeft: "10px" }}>{userDetails ? userDetails.userName : 'User'}</span>
           </li>
           <li>
