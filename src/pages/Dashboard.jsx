@@ -19,7 +19,7 @@ const Dashboard = () => {
 
     const [isOpen, setIsOpen] = useState(false);
     return (
-        <div className='maindashboarddiv m-3'>
+        <div className='maindashboarddiv m-3 w-100'>
             <h1 className='text-center'>{lngsltd["About Skeidar"]}</h1>
             <Accordion defaultActiveKey="0">
                 <Accordion.Item style={{margin:'5px'}} eventKey="0">

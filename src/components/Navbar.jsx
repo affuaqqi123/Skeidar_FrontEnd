@@ -23,7 +23,9 @@ const Navbar = ({ onLogout }) => {
   return (
     <div className='headerpage'>
       <div className='navbar'>
-        <img src={companylogo} alt="" className='logo' />
+        {/* <img src="../Assets/skeidar-logo_white.webp" alt="Skeidar" className='logo' /> */}
+        {/* <img src={companylogo} alt="Skeidar" className='logo' /> */}
+        <h2 style={{color:"white",fontWeight:"800",marginLeft:"20px"}}>S K E I D A R</h2>
         <ul>
           <li>
             <span style={textStyle}> {lngsltd["Welcome"]}</span>

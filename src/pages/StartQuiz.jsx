@@ -181,7 +181,7 @@ const StartQuiz = () => {
     }, [currentQuestionIndex, questions]);
 
     return (
-        <div className="startquiz-container ">
+        <div className="startquiz-container">
              <ToastContainer 
             position="top-center" 
             autoClose={5000}             
@@ -191,8 +191,8 @@ const StartQuiz = () => {
             <div className="quiz-title">
                 {currentQuiz ? currentQuiz.title : "Loading..."}
             </div>
-            {/* <div className="quiz-box" style={{ maxWidth: "600px" }}> */}
-            <div className="quiz-box">
+            {/* <div className="quiz-box" style={{ maxWidth: "1000px" }}> */}
+            <div className="quiz-box ">
                 <div className="question-container">
                     {currentQuestion ? (
                         <div className="datacontainer">
