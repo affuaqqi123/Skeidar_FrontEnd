@@ -80,6 +80,7 @@ const Courses = () => {
 
     //Environment variables
     const apiUrl = process.env.REACT_APP_API_URL;
+    const [dynamicText, setDynamicText] = useState(lngsltd["Loading...Please wait"]);
 
     useEffect(() => {
         fetchGroupData();
@@ -149,9 +150,19 @@ const Courses = () => {
                         setUserGroupName(getGroupById(userGroupId));
                     }
                     const filteredData = result.data.filter(course => course.groupName === userGroupName);
+                    if (filteredData.length === 0) {
+                        setTimeout(() => {
+                        setDynamicText(lngsltd["No Data Found"]);
+                    }, 2000);
+                    }
                     setData(filteredData);
                 } else {
                     setData(result.data);
+                    if (result.data.length === 0) {
+                        setTimeout(() => {
+                        setDynamicText(lngsltd["No Data Found"]);
+                    }, 2000);
+                    }
                 }
 
                 clear();
@@ -469,7 +480,8 @@ const Courses = () => {
 
                                 )
                                 :
-                                <tr><td colSpan={"5"}><h4 style={{ paddingTop: "25px", textAlign: "center" }}> {lngsltd["Loading...Please wait"]}</h4></td></tr>
+                                <tr><td colSpan={"5"}><h4 style={{ paddingTop: "25px", textAlign: "center" }}> {dynamicText}</h4></td></tr>
+                                // <tr><td colSpan={"5"}><h4 style={{ paddingTop: "25px", textAlign: "center" }}> {lngsltd["Loading...Please wait"]}</h4></td></tr>
                         }
                     </tbody>
                 </Table>

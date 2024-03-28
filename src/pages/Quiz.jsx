@@ -59,6 +59,7 @@ const Quiz = () => {
 
     //Environment variables
     const apiUrl=process.env.REACT_APP_API_URL;
+    const [dynamicText, setDynamicText] = useState(lngsltd["Loading...Please wait"]);
 
     useEffect(() => {
         getData();
@@ -69,6 +70,11 @@ const Quiz = () => {
         axios.get(`${apiUrl}/Quiz`, { headerjsondata })
             .then((result) => {
                 setData(result.data);
+                if (result.data.length === 0) {
+                    setTimeout(() => {
+                    setDynamicText(lngsltd["No Data Found"]);
+                }, 2000);
+                }
                 clear();
             })
             .catch((error) => {
@@ -243,7 +249,12 @@ const Quiz = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map((d, i) => (
+                        {data.length === 0 ? (
+                            <tr>
+                                <td colSpan={"5"}><h4 style={{ paddingTop: "25px", textAlign: "center" }}>{dynamicText}</h4></td>
+                            </tr>
+                        ) : (
+                            data.map((d, i) => (
                             <tr key={i}>
                                 <td className='text-center'>{i + 1}</td>
                                 <td className='text-center'>{
@@ -257,7 +268,8 @@ const Quiz = () => {
                                     <button className='btn btn-sm btn-info' onClick={() => handleAddQuestions(d.quizID)}>{lngsltd["Add Questions"]}</button>
                                 </td>
                             </tr>
-                        ))}
+                        ))
+                    )}
                     </tbody>
                 </Table>
                 <Modal show={show} onHide={handleClose}>

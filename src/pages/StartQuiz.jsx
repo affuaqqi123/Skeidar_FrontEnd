@@ -189,7 +189,7 @@ const StartQuiz = () => {
             closeOnClick 
             />  
             <div className="quiz-title">
-                {currentQuiz ? currentQuiz.title : "Loading..."}
+                {currentQuiz ? currentQuiz.title : lngsltd["Loading...Please wait"]}
             </div>
             {/* <div className="quiz-box" style={{ maxWidth: "1000px" }}> */}
             <div className="quiz-box ">

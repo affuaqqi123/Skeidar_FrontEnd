@@ -35,7 +35,8 @@ const StartCoursePage = () => {
   const [videoWatched, setVideoWatched] = useState(false);
 
   //Environment variables
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const apiUrl=process.env.REACT_APP_API_URL;
+
 
   const fetchCourseData = async () => {
     try {
@@ -213,9 +214,11 @@ const StartCoursePage = () => {
         const response = await fetch(`${apiUrl}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`, {
           method: 'PUT',
           headers: {
+            
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${userDetails.token}`
-          }
+          },
+          // mode:'no-cors'
         });
 
         if (!response.ok) {

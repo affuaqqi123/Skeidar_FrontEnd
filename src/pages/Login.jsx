@@ -5,6 +5,8 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import '../App.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import englishFlag from '../Assets/United-Kingdom-Flag.png';
+import norwegian from '../Assets/NorwegianFlag.png';
 
 function Login(props) {
     const [username, setUsername] = useState('');
@@ -70,10 +72,37 @@ function Login(props) {
                 newestOnTop={false} // Display newer notifications below older ones
                 closeOnClick // Close the notification when clicked
             />
-            <div className='btncltrs' style={{float:'right'}}>
+            {/* <div className='btncltrs' style={{float:'right'}}>
                 <button className='btnenglish' onClick={() => setCulture('en-US')}>English</button>
                 <button className='btnnorwagian' onClick={() => setCulture('nb-NO')}>Norwegian</button>
-            </div>
+            </div> */}
+            <div className='btncltrs'>
+            <div className='button-wrapper' style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button className='btnenglish' onClick={() => setCulture('en-US')} style={{
+                    backgroundImage: `url(${englishFlag})`,                    
+                    backgroundSize: 'cover', 
+                    backgroundPosition: 'center', 
+                    backgroundRepeat: 'no-repeat', 
+                    width: '60px', 
+                    height: '30px'
+                }}
+                title="English"
+                >
+         
+                </button>
+                <button className='btnnorwagian' onClick={() => setCulture('nb-NO')}
+                style={{
+                    backgroundImage: `url(${norwegian})`,
+                    backgroundSize: 'cover', 
+                    backgroundPosition: 'center', 
+                    backgroundRepeat: 'no-repeat',
+                    width: '60px', 
+                    height: '30px'
+                }}
+                title="Norwegian"
+                ></button>
+                </div>
+            </div>
             <Container fluid className="cntnr d-flex align-items-center justify-content-center " style={{ backgroundColor: 'white' }}>
                 {/* <h1>{localizedStrings.Welcome}</h1> */}
                 {/* <p>{localizedStrings.Sorry}</p> */}

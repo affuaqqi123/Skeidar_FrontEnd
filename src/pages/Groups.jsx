@@ -43,6 +43,8 @@ const Groups = () => {
     //Environment variables
     const apiUrl = process.env.REACT_APP_API_URL;
 
+    const [dynamicText, setDynamicText] = useState(lngsltd["Loading...Please wait"]);
+
     useEffect(() => {
         getData();
     }, [])
@@ -50,7 +52,12 @@ const Groups = () => {
     const getData = () => {
         axios.get(`${apiUrl}/Group`, { headers })
             .then((result) => {
-                setData(result.data)
+                setData(result.data);
+                if (result.data.length === 0) {
+                    setTimeout(() => {
+                    setDynamicText(lngsltd["No Data Found"]);
+                }, 2000);
+                }            
 
             })
             .catch((error) => {
@@ -165,7 +172,11 @@ const Groups = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {
+                        {data.length === 0 ? (
+                            <tr>
+                                <td colSpan={"5"}><h4 style={{ paddingTop: "25px", textAlign: "center" }}>{dynamicText}</h4></td>
+                            </tr>
+                        ) : (
                             data.map((d, i) => (
 
                                 <tr key={i}>
@@ -177,7 +188,7 @@ const Groups = () => {
                                     </td>
                                 </tr>
                             ))
-                        }
+                        )}
                     </tbody>
                 </Table>
                 <Modal show={show} onHide={handleClose}>

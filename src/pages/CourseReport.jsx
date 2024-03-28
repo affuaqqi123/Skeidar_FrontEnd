@@ -31,6 +31,8 @@ const CourseReport = () => {
   //Environment variables
   const apiUrl = process.env.REACT_APP_API_URL;
 
+  const [dynamicText, setDynamicText] = useState(lngsltd["Loading...Please wait"]);
+
   const { id } = useParams();
 
   const fetchStoreData = async () => {
@@ -60,6 +62,11 @@ const CourseReport = () => {
     try {
       const response = await axios.get(`${apiUrl}/UserCourseStep/GetUser&CourseSteps/${id}`, { headers });
       setProgressData(response.data);
+      if (response.data.length === 0) {
+        setTimeout(() => {
+        setDynamicText(lngsltd["No Data Found"]);
+      }, 2000);
+    }   
 
     } catch (error) {
       toast.info(lngsltd['There was an issue to get the data']);
@@ -111,7 +118,12 @@ const CourseReport = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredProgressData.map((progress, index) => (
+            {filteredProgressData.length === 0 ? (
+                            <tr>
+                                <td colSpan={"4"}><h4 style={{ paddingTop: "25px", textAlign: "center" }}>{dynamicText}</h4></td>
+                            </tr>
+                        ) : (
+                          filteredProgressData.map((progress, index) => (
               <tr key={index}>
                 <td className="text-center">{progress.userName}</td>
                 <td className="text-center">{progress.progressPercentage}% <br>
@@ -123,7 +135,8 @@ const CourseReport = () => {
                 <td className="text-center">{storeLocations[progress.storeID]}</td>
                 <td className="text-center">{progress.status}</td>
               </tr>
-            ))}
+            ))
+          )}
           </tbody>
         </Table>
       </div>

@@ -21,6 +21,7 @@ const Questions = () => {
 
     //Environment variables
     const apiUrl = process.env.REACT_APP_API_URL;
+    const [dynamicText, setDynamicText] = useState(lngsltd["Loading...Please wait"]);
 
     const [questions, setQuestions] = useState([]);
     const [showAdd, setShowAdd] = useState(false);
@@ -77,6 +78,11 @@ const Questions = () => {
             const response = await axios.get(`${apiUrl}/Question/QuizID/${quizid}`, { headers });
             const sortedData = response.data.slice().sort((a, b) => a.questionNo - b.questionNo);
             setQuestions(sortedData);
+            if (sortedData.length === 0) {
+                setTimeout(() => {
+                setDynamicText(lngsltd["No Data Found"]);
+            }, 2000);
+            }  
         } catch (error) {
             console.error('Error fetching questions: ', error)
         }
@@ -388,7 +394,12 @@ const Questions = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {questions.map((question, index) => (
+                        {questions.length === 0 ? (
+                            <tr>
+                                <td colSpan={"6"}><h4 style={{ paddingTop: "25px", textAlign: "center" }}>{dynamicText}</h4></td>
+                            </tr>
+                        ) : (
+                            questions.map((question, index) => (
                             <tr key={index}>
                                 <td>{question.questionNo}</td>
                                 <td>{question.questionText}</td>
@@ -405,7 +416,8 @@ const Questions = () => {
                                     <Button variant="danger" onClick={() => handleDelete(question.id)}>{lngsltd["Delete"]}</Button>
                                 </td>
                             </tr>
-                        ))}
+                        ))
+                    )}
                     </tbody>
                 </Table>
             </div>
