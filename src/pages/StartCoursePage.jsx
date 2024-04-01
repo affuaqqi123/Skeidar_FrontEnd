@@ -35,7 +35,7 @@ const StartCoursePage = () => {
   const [videoWatched, setVideoWatched] = useState(false);
 
   //Environment variables
-  const apiUrl=process.env.REACT_APP_API_URL;
+  const apiUrl = process.env.REACT_APP_API_URL;
 
 
   const fetchCourseData = async () => {
@@ -214,11 +214,18 @@ const StartCoursePage = () => {
         const response = await fetch(`${apiUrl}/UserCourseStep/UpdateStatus?courseId=${courseId}&userId=${userID}&stepNumber=${stepNo}&status=${status}`, {
           method: 'PUT',
           headers: {
-            
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${userDetails.token}`
+
+            // 'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userDetails.token}`,
+            'Content-Type': 'application/json;charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+            'Access-Control-Max-Age': '3600',
+            'Access-Control-Allow-Headers': 'Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With'
+
           },
-          // mode:'no-cors'
+
+           mode:'no-cors'
         });
 
         if (!response.ok) {
@@ -263,121 +270,121 @@ const StartCoursePage = () => {
             'Authorization': `Bearer ${userDetails.token}`
           }
         }).then((result) => {
-              console.log("entered", result);
-              toast.success(lngsltd['Course submitted successfully']);
-            })
-      .catch((error) => {
-        toast.error(lngsltd['Failed to submit course']);
-      })
-    navigate('/courses');
-  } catch (error) {
-    console.error('Error updating status and video time:', error);
+          console.log("entered", result);
+          toast.success(lngsltd['Course submitted successfully']);
+        })
+          .catch((error) => {
+            toast.error(lngsltd['Failed to submit course']);
+          })
+        navigate('/courses');
+      } catch (error) {
+        console.error('Error updating status and video time:', error);
+      }
+    }
   }
-}
-  }
 
 
 
-// Function to generate image URL with headers
-// const getImageUrl = (courseID, stepNo, contentType, fileName) => {
-//   const url = `${COURSE_API_URL}/CourseStep/filecontent?CourseID=${courseID}&StepNo=${stepNo}&ContentType=${contentType}&FileName=${fileName}`;
-//   return `${url}&headers=${headers}`;
-// }
+  // Function to generate image URL with headers
+  // const getImageUrl = (courseID, stepNo, contentType, fileName) => {
+  //   const url = `${COURSE_API_URL}/CourseStep/filecontent?CourseID=${courseID}&StepNo=${stepNo}&ContentType=${contentType}&FileName=${fileName}`;
+  //   return `${url}&headers=${headers}`;
+  // }
 
 
-return (
-  <div className='startcoursepagediv w-100 m-3'>
-    <ToastContainer
-      position="top-center" // Position at the bottom right corner
-      autoClose={5000} // Close after 5 seconds
-      // hideProgressBar={false} // Show progress bar
-      newestOnTop={false} // Display newer notifications below older ones
-      closeOnClick // Close the notification when clicked
-    />
-    {/* Stepper */}
-    <div className="stepper-container mb-5 p-3 rounded">
-      {courseData.map((courseStep, index) => (
-        <div key={index} className="stepper-step">
-          <div
-            className={`step ${courseStep.stepNo <= currentStep ? 'active' : ''}`}
-          >
-            {courseStep.stepNo}
-          </div>
-          {index < currentStep - 1 && (
-            <div className="progress-line"></div>
-          )}
-        </div>
-      ))}
-    </div>
-
-    {/* Content Section */}
-    <div className="content-section">
-      {courseData[currentStep - 1] && (
-        <>
-          {courseData[currentStep - 1].contentType === 'Image' && (
-            <>
-              {imageUrls.length > 0 && (
-                <div >
-                  {imageUrls.map((imageUrl, index) => (
-                    <div key={index} className='media-item'>
-                      <div>
-                        <img src={imageUrl} className='uploaded-image m-3' style={{ width: '90%', height: 'auto' }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-          {courseData[currentStep - 1].contentType === 'Video' && (
-            <div className='d-flex justify-content-center'>
-              {videoUrl ? (
-                <>
-                  <video
-
-                    controls
-                    autoPlay
-                    width="80%"
-                    onEnded={() => setVideoWatched(true)}
-                  >
-                    <source src={videoUrl} type="video/mp4" />
-                    {lngsltd["Your browser does not support the video tag"]}
-                  </video>
-
-                </>
-              ) : (
-                <p>{lngsltd["Loading...Please wait"]}</p>
-              )}
+  return (
+    <div className='startcoursepagediv w-100 m-3'>
+      <ToastContainer
+        position="top-center" // Position at the bottom right corner
+        autoClose={5000} // Close after 5 seconds
+        // hideProgressBar={false} // Show progress bar
+        newestOnTop={false} // Display newer notifications below older ones
+        closeOnClick // Close the notification when clicked
+      />
+      {/* Stepper */}
+      <div className="stepper-container mb-5 p-3 rounded">
+        {courseData.map((courseStep, index) => (
+          <div key={index} className="stepper-step">
+            <div
+              className={`step ${courseStep.stepNo <= currentStep ? 'active' : ''}`}
+            >
+              {courseStep.stepNo}
             </div>
-          )}
-        </>
-      )}
-    </div>
+            {index < currentStep - 1 && (
+              <div className="progress-line"></div>
+            )}
+          </div>
+        ))}
+      </div>
 
-    <hr className='border border-danger h-1'></hr>
+      {/* Content Section */}
+      <div className="content-section">
+        {courseData[currentStep - 1] && (
+          <>
+            {courseData[currentStep - 1].contentType === 'Image' && (
+              <>
+                {imageUrls.length > 0 && (
+                  <div >
+                    {imageUrls.map((imageUrl, index) => (
+                      <div key={index} className='media-item'>
+                        <div>
+                          <img src={imageUrl} className='uploaded-image m-3' style={{ width: '90%', height: 'auto' }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+            {courseData[currentStep - 1].contentType === 'Video' && (
+              <div className='d-flex justify-content-center'>
+                {videoUrl ? (
+                  <>
+                    <video
 
-    {/* Description Section */}
-    <div className="description-section m-2 border border-secondary p-3 " dangerouslySetInnerHTML={{ __html: courseData[currentStep - 1]?.description }}></div>
+                      controls
+                      autoPlay
+                      width="80%"
+                      onEnded={() => setVideoWatched(true)}
+                    >
+                      <source src={videoUrl} type="video/mp4" />
+                      {lngsltd["Your browser does not support the video tag"]}
+                    </video>
 
-    {/* Navigation Buttons */}
-    <div className="navigation-buttons">
-      <button className="btn btn-danger" onClick={handleExit}>
-        <FontAwesomeIcon className='iconstyle' icon={faRightFromBracket} />{lngsltd["Exit"]}
-      </button>
-      <div style={{ float: "right" }}>
-        <button className="btn btn-info" onClick={handlePrevious} disabled={currentStep === 1}>
-          <FontAwesomeIcon className='iconstyle' icon={faLeftLong} /> {lngsltd["Previous"]}
+                  </>
+                ) : (
+                  <p>{lngsltd["Loading...Please wait"]}</p>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      <hr className='border border-danger h-1'></hr>
+
+      {/* Description Section */}
+      <div className="description-section m-2 border border-secondary p-3 " dangerouslySetInnerHTML={{ __html: courseData[currentStep - 1]?.description }}></div>
+
+      {/* Navigation Buttons */}
+      <div className="navigation-buttons">
+        <button className="btn btn-danger" onClick={handleExit}>
+          <FontAwesomeIcon className='iconstyle' icon={faRightFromBracket} />{lngsltd["Exit"]}
         </button>
-        <button className="btn btn-info" onClick={handleNext} hidden={currentStep === courseData.length}>
-          <FontAwesomeIcon className='iconstyle' icon={faRightLong} /> {lngsltd["Next"]}
-        </button>
-        <button className="btn btn-outline-success border " hidden={currentStep < courseData.length} onClick={handleSubmission}>
-          Submit <FontAwesomeIcon className='iconstyle px-1' icon={faPaperPlane} />
-        </button>
+        <div style={{ float: "right" }}>
+          <button className="btn btn-info" onClick={handlePrevious} disabled={currentStep === 1}>
+            <FontAwesomeIcon className='iconstyle' icon={faLeftLong} /> {lngsltd["Previous"]}
+          </button>
+          <button className="btn btn-info" onClick={handleNext} hidden={currentStep === courseData.length}>
+            <FontAwesomeIcon className='iconstyle' icon={faRightLong} /> {lngsltd["Next"]}
+          </button>
+          <button className="btn btn-outline-success border " hidden={currentStep < courseData.length} onClick={handleSubmission}>
+            Submit <FontAwesomeIcon className='iconstyle px-1' icon={faPaperPlane} />
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default StartCoursePage;

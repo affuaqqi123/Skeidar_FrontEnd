@@ -30,3 +30,16 @@ const getData = () => {
           console.log(error);
       });
     };
+const Home = require("./Home.jsx");
+const browserHistory = useBasename(createHistory)({
+  basename: "/slgeducationapp"
+});
+
+ReactDOM.render(
+  <Router history={browserHistory}>
+      <Route path="/" component={App}>
+          <IndexRoute component={Home} />
+      </Route>
+  </Router>,
+  document.getElementById("wrap")
+);

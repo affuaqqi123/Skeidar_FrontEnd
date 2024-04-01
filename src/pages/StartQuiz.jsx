@@ -8,11 +8,11 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const StartQuiz = () => {
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
-    const lngsltd=JSON.parse(localStorage.getItem('languageSelected'));
-    const  headers= {
+    const lngsltd = JSON.parse(localStorage.getItem('languageSelected'));
+    const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${userDetails.token}`
-      };
+    };
     const navigate = useNavigate();
     const { courseid } = useParams();
     const [currentQuiz, setCurrentQuiz] = useState(null);
@@ -23,9 +23,9 @@ const StartQuiz = () => {
     const [selectedOption, setSelectedOption] = useState(null);
 
     //Environment variables
-    const apiUrl=process.env.REACT_APP_API_URL;
+    const apiUrl = process.env.REACT_APP_API_URL;
 
-    useEffect(() => {        
+    useEffect(() => {
         fetchQuiz();
     }, [courseid]);
 
@@ -34,7 +34,7 @@ const StartQuiz = () => {
             const response = await axios.get(`${apiUrl}/Quiz/ByCourse/${courseid}`, { headers });
             setCurrentQuiz(response.data);
             const questionsResponse = await axios.get(`${apiUrl}/Question/QuizID/${response.data.quizID}`, { headers });
-            setQuestions(questionsResponse.data);            
+            setQuestions(questionsResponse.data);
             createUserQuiz(response.data.quizID);
         } catch (error) {
             console.error('Error fetching quiz:', error);
@@ -55,7 +55,7 @@ const StartQuiz = () => {
                 score: 0
             };
 
-            const response = await axios.post(`${apiUrl}/UserQuiz`, userQuizData, { headers });            
+            const response = await axios.post(`${apiUrl}/UserQuiz`, userQuizData, { headers });
 
             setUserQuiz(response.data);
         } catch (error) {
@@ -85,7 +85,7 @@ const StartQuiz = () => {
                 score: score
             };
 
-            const response = await axios.put(`${apiUrl}/UserQuiz/${userQuizData.userQuizID}`, userQuizData, { headers });            
+            const response = await axios.put(`${apiUrl}/UserQuiz/${userQuizData.userQuizID}`, userQuizData, { headers });
             window.alert(`You Scored/Du scoret: ${score}`);
             // window.alert(lngsltd[`You Scored: ${score}`]);
             setUserQuiz(null);
@@ -105,7 +105,7 @@ const StartQuiz = () => {
         }
         return score;
     };
-    
+
 
     const handleSubmit = async () => {
         const userAnswerData = {
@@ -115,17 +115,17 @@ const StartQuiz = () => {
             selectedOption: selectedOption,
             correctOption: currentQuestion.correctOption,
             isCorrect: selectedOption === currentQuestion.correctOption
-        };        
-        const response = await axios.post(`${apiUrl}/UserAnswer`, userAnswerData, { headers });        
+        };
+        const response = await axios.post(`${apiUrl}/UserAnswer`, userAnswerData, { headers });
         setSelectedOption(null);
         UpdateUserQuiz();
     }
 
     const handleNextQuestion = async () => {
         if (selectedOption !== null) {
-            if (currentQuestionIndex === questions.length - 1) {                
+            if (currentQuestionIndex === questions.length - 1) {
                 handleSubmit();
-            } else {                
+            } else {
                 try {
                     const userAnswerData = {
                         userAnswerID: 0,
@@ -134,16 +134,16 @@ const StartQuiz = () => {
                         selectedOption: selectedOption,
                         correctOption: currentQuestion.correctOption,
                         isCorrect: selectedOption === currentQuestion.correctOption
-                    };                    
-                    const response = await axios.post(`${apiUrl}/UserAnswer`, userAnswerData, { headers });                    
+                    };
+                    const response = await axios.post(`${apiUrl}/UserAnswer`, userAnswerData, { headers });
                     setSelectedOption(null);
                 } catch (error) {
                     console.error('Error saving user answer:', error);
                 }
                 setCurrentQuestionIndex(prevIndex => prevIndex + 1);
-                const userQuizID = userQuiz.userQuizID; 
-            const questionID = questions[currentQuestionIndex + 1].id; 
-            await fetchSelectedOption(userQuizID, questionID);
+                const userQuizID = userQuiz.userQuizID;
+                const questionID = questions[currentQuestionIndex + 1].id;
+                await fetchSelectedOption(userQuizID, questionID);
             }
         } else {
             toast.info(lngsltd["Please select an option before proceeding to the next question."])
@@ -162,8 +162,8 @@ const StartQuiz = () => {
     };
 
     const handlePrevious = () => {
-        setCurrentQuestionIndex((prevIndex) =>prevIndex - 1);
-        const userQuizID = userQuiz.userQuizID; 
+        setCurrentQuestionIndex((prevIndex) => prevIndex - 1);
+        const userQuizID = userQuiz.userQuizID;
         const questionID = questions[currentQuestionIndex - 1].id;
         fetchSelectedOption(userQuizID, questionID);
     }
@@ -182,104 +182,111 @@ const StartQuiz = () => {
 
     return (
         <div className="startquiz-container">
-             <ToastContainer 
-            position="top-center" 
-            autoClose={5000}             
-            newestOnTop={false} 
-            closeOnClick 
-            />  
+            <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                newestOnTop={false}
+                closeOnClick
+            />
             <div className="quiz-title">
-                {currentQuiz ? currentQuiz.title : lngsltd["Loading...Please wait"]}
+                {currentQuiz ? currentQuiz.title : "Loading..."}
             </div>
-            {/* <div className="quiz-box" style={{ maxWidth: "1000px" }}> */}
             <div className="quiz-box ">
-                <div className="question-container">
-                    {currentQuestion ? (
+                <div className="quiz-box-left">
+                    <div className="bigbox">
+                    </div>
+                    <div className="questionnumber">
+                        {currentQuestion ? (
+                            <p className="qstn">{"Question "} {currentQuestion.questionNo}</p>
+                        ) : null}
+                    </div>
+                    <div className="quizimage">
+                        {currentQuestion ? (
+                            <img
+                                src={`${apiUrl}/Question/Image/${currentQuestion.quizID}/${currentQuestion.questionNo}/${currentQuestion.imageName}`}
+                                alt="Image"
+                                style={{ maxWidth: "100%", height: "auto%" }}
+                            />
+                        ) : null}
+                    </div>
+
+                </div>
+                <div className="quiz-box-right">
+                    <div className="quizquestion">
                         <div className="datacontainer">
-                            <p className="qstn">{lngsltd["Question"]} {currentQuestion.questionNo}: {currentQuestion.questionText}</p>
-                            {currentQuestion.imageName !== "No Image" && currentQuestion.imageName ? (
-                                <div className="image-container">
-                                    <img
-                                        src={`${apiUrl}/Question/Image/${currentQuestion.quizID}/${currentQuestion.questionNo}/${currentQuestion.imageName}`}
-                                        alt="Image"
-                                        style={{ maxWidth:"600px",width: "100%", height: "auto" }}
-                                    />
-                                </div>
+                            {currentQuestion ? (
+                                <p className="qstn">{currentQuestion.questionText}</p>
                             ) : null}
-
-                            <div className="options-container">
-                                <div className="option">
-                                    <input className='rdbtn'
-                                        type="radio"
-                                        id="option-1"
-                                        name="option"
-                                        value={currentQuestion.option1}
-                                        checked={selectedOption === 1}
-                                        onChange={() => handleOptionChange(1)}
-                                    />
-                                    <label htmlFor="option-1">{currentQuestion.option1}</label>
-                                </div>
-                                <div className="option">
-                                    <input className='rdbtn'
-                                        type="radio"
-                                        id="option-2"
-                                        name="option"
-                                        value={currentQuestion.option2}
-                                        checked={selectedOption === 2}
-                                        onChange={() => handleOptionChange(2)}
-                                    />
-                                    <label htmlFor="option-2">{currentQuestion.option2}</label>
-                                </div>
-                                <div className="option">
-                                    <input className='rdbtn'
-                                        type="radio"
-                                        id="option-3"
-                                        name="option"
-                                        value={currentQuestion.option3}
-                                        checked={selectedOption === 3}
-                                        onChange={() => handleOptionChange(3)}
-                                    />
-                                    <label htmlFor="option-3">{currentQuestion.option3}</label>
-                                </div>
-                                <div className="option">
-                                    <input className='rdbtn'
-                                        type="radio"
-                                        id="option-4"
-                                        name="option"
-                                        value={currentQuestion.option4}
-                                        checked={selectedOption === 4}
-                                        onChange={() => handleOptionChange(4)}
-                                    />
-                                    <label htmlFor="option-4">{currentQuestion.option4}</label>
-                                </div>
+                        </div>
+                        {currentQuestion ? (
+                        <div className="options-container">
+                            <div className="option">
+                                <input className='rdbtn'
+                                    type="radio"
+                                    id="option-1"
+                                    name="option"
+                                    value={currentQuestion.option1}
+                                    checked={selectedOption === 1}
+                                    onChange={() => handleOptionChange(1)}
+                                />
+                                <label htmlFor="option-1">{currentQuestion.option1}</label>
                             </div>
-
+                            <div className="option">
+                                <input className='rdbtn'
+                                    type="radio"
+                                    id="option-2"
+                                    name="option"
+                                    value={currentQuestion.option2}
+                                    checked={selectedOption === 2}
+                                    onChange={() => handleOptionChange(2)}
+                                />
+                                <label htmlFor="option-2">{currentQuestion.option2}</label>
+                            </div>
+                            <div className="option">
+                                <input className='rdbtn'
+                                    type="radio"
+                                    id="option-3"
+                                    name="option"
+                                    value={currentQuestion.option3}
+                                    checked={selectedOption === 3}
+                                    onChange={() => handleOptionChange(3)}
+                                />
+                                <label htmlFor="option-3">{currentQuestion.option3}</label>
+                            </div>
+                            <div className="option">
+                                <input className='rdbtn'
+                                    type="radio"
+                                    id="option-4"
+                                    name="option"
+                                    value={currentQuestion.option4}
+                                    checked={selectedOption === 4}
+                                    onChange={() => handleOptionChange(4)}
+                                />
+                                <label htmlFor="option-4">{currentQuestion.option4}</label>
+                            </div>
+                        </div>
+                        ) : null}
+                        <div className="navigation-buttons">
+                            <button
+                                className="exit-button"
+                                onClick={handleExit}
+                            >
+                                {lngsltd["Exit"]}
+                            </button>
+                            <button
+                                className="previous-button"
+                                onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
+                                {lngsltd["Previous"]}
+                            </button>
+                            <button
+                                className="next-button"
+                                onClick={handleNextQuestion}
+                            >
+                                {lngsltd["Next"]}
+                            </button>
 
                         </div>
-                    ) : (
-                        <p>{lngsltd["Loading....Please wait"]}</p>
-                    )}
-                </div>
-                <br></br>
-                <div className="navigation-buttons">
-                    <button
-                        className="exit-button"
-                        onClick={handleExit}
-                    >
-                        {lngsltd["Exit"]}
-                    </button>
-                    <button
-                     className="previous-button" 
-                     onClick={handlePrevious}  disabled={currentQuestionIndex === 0}>
-                        {lngsltd["Previous"]}
-                     </button>
-                    <button
-                        className="next-button"
-                        onClick={handleNextQuestion}
-                    >
-                       {lngsltd["Next"]} 
-                    </button>
-                   
+                    </div>
                 </div>
             </div>
         </div>

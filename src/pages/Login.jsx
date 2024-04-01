@@ -130,6 +130,7 @@ function Login(props) {
                                     placeholder={localizedStrings["Enter your password"]}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                    autoComplete="off"
                                 />
                             </Form.Group>
                             <div className='text-center '>
