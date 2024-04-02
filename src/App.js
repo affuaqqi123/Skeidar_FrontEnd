@@ -26,7 +26,7 @@ function App() {
     if (storedLoggedInStatus) {
       setIsLoggedIn(JSON.parse(storedLoggedInStatus));
     }
-    console.log(storedLoggedInStatus);
+    // console.log(storedLoggedInStatus);
   }, []);
 
   const handleLogout = () => {
@@ -38,14 +38,16 @@ function App() {
   return (
     <div className='dimsns'>
       {!isLoggedIn && (
-        <BrowserRouter>
+         <BrowserRouter basename="/slgeducationapp">
+         {/* <BrowserRouter>  */}
           <Routes>
             <Route path="/" element={<Login setLoggedIn={setIsLoggedIn} />} />
           </Routes>
         </BrowserRouter>
       )}
       {isLoggedIn && (
-        <BrowserRouter>
+        // <BrowserRouter>
+          <BrowserRouter basename="/slgeducationapp"> 
         
           <div className="header">
             <Navbar onLogout={handleLogout} />
@@ -56,7 +58,7 @@ function App() {
               <Sidebar />
             </div>
             <div className="main-content">
-              <Routes>
+              <Routes>                
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/users" element={<Users />} />

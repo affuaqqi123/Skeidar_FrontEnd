@@ -57,7 +57,8 @@ function Login(props) {
 
             })
             .catch(error => {
-                toast.error(localizedStrings['Please enter valid UserName and Password'])
+                toast.error(localizedStrings['Please enter valid UserName and Password']);
+                // console.error(error);
                 props.setLoggedIn(false);
             });
     };

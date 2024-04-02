@@ -225,7 +225,7 @@ const StartCoursePage = () => {
 
           },
 
-           mode:'no-cors'
+          //  mode:'no-cors'
         });
 
         if (!response.ok) {
